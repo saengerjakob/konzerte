@@ -1789,31 +1789,39 @@
         <div class="venue-library" id="venue-library"></div>
 
         <section class="settings-section" aria-labelledby="sync-settings-title">
-          <h3 id="sync-settings-title">Cloud-Synchronisierung</h3>
-          <p>Mit demselben E-Mail-Konto bleiben Handy und Desktop automatisch auf demselben Stand.</p>
+          <h3 id="sync-settings-title">GitHub-Synchronisierung</h3>
+          <p>Speichert dein Archiv als separate JSON-Datei in einem privaten GitHub-Repository.</p>
           <div class="sync-panel">
             <div class="sync-status" id="sync-status"><span class="sync-dot" aria-hidden="true"></span><span id="sync-status-text">Nur lokal gespeichert</span></div>
             <div class="sync-fields">
               <div class="field">
-                <label for="sync-url-input">Supabase-Projekt-URL</label>
-                <input class="input" id="sync-url-input" type="url" placeholder="https://dein-projekt.supabase.co" autocomplete="url">
+                <label for="github-owner-input">GitHub-Benutzername</label>
+                <input class="input" id="github-owner-input" type="text" placeholder="z. B. jakob123" autocomplete="username">
               </div>
               <div class="field">
-                <label for="sync-key-input">Publishable-/Anon-Key</label>
-                <input class="input" id="sync-key-input" type="password" placeholder="sb_publishable_…" autocomplete="off">
+                <label for="github-repo-input">Daten-Repository</label>
+                <input class="input" id="github-repo-input" type="text" placeholder="z. B. meine-konzertdaten" autocomplete="off">
               </div>
-              <button class="button button-ghost" id="save-sync-config-button" type="button">Verbindung speichern</button>
               <div class="field">
-                <label for="sync-email-input">E-Mail für die Anmeldung</label>
-                <input class="input" id="sync-email-input" type="email" placeholder="name@beispiel.de" autocomplete="email">
+                <label for="github-branch-input">Branch</label>
+                <input class="input" id="github-branch-input" type="text" value="main" autocomplete="off">
               </div>
+              <div class="field">
+                <label for="github-path-input">Datendatei</label>
+                <input class="input" id="github-path-input" type="text" value="concert-data.json" autocomplete="off">
+              </div>
+              <div class="field">
+                <label for="github-token-input">Fine-grained GitHub Token</label>
+                <input class="input" id="github-token-input" type="password" placeholder="github_pat_…" autocomplete="off">
+              </div>
+              <button class="button" id="save-github-config-button" type="button">Verbinden und synchronisieren</button>
             </div>
             <div class="sync-actions">
-              <button class="button" id="send-magic-link-button" type="button">Anmeldelink senden</button>
-              <button class="button button-ghost" id="sync-now-button" type="button" hidden>Jetzt synchronisieren</button>
-              <button class="button button-ghost button-danger" id="sync-sign-out-button" type="button" hidden>Abmelden</button>
+              <button class="button button-ghost" id="github-push-button" type="button" hidden>Aktuelle Liste hochladen</button>
+              <button class="button button-ghost" id="github-pull-button" type="button" hidden>Cloud-Daten laden</button>
+              <button class="button button-ghost button-danger" id="remove-github-config-button" type="button" hidden>Verbindung entfernen</button>
             </div>
-            <p class="sync-help" id="sync-help">Die Projekt-URL und der öffentliche Schlüssel werden nur auf diesem Gerät gespeichert. Die Konzertdaten sind durch deinen Login geschützt.</p>
+            <p class="sync-help" id="sync-help">Der Token wird nur lokal auf diesem Gerät gespeichert und niemals exportiert oder in die Datendatei geschrieben.</p>
           </div>
         </section>
 
@@ -1856,8 +1864,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.2/dist/umd/supabase.min.js"></script>
-
   <script>
     (() => {
       "use strict";
@@ -1865,7 +1871,7 @@
       const STORAGE_KEY = "meine-konzertliste-v1";
       const PREFERENCES_KEY = "meine-konzertliste-einstellungen-v1";
       const VENUES_KEY = "meine-konzertliste-orte-v1";
-      const SYNC_CONFIG_KEY = "meine-konzertliste-sync-v1";
+      const GITHUB_SYNC_CONFIG_KEY = "meine-konzertliste-github-sync-v1";
       const DEFAULT_STATS = ["bands", "appearances", "places", "year", "upcoming", "averageRating", "topBands", "topVenues"];
 
       const initialConcerts = loadConcerts();
@@ -1880,13 +1886,13 @@
         statSettings: Array.isArray(savedPreferences.statSettings) ? savedPreferences.statSettings : DEFAULT_STATS
       };
 
-      const syncRuntime = {
-        client: null,
-        user: null,
-        channel: null,
+      const githubRuntime = {
         timer: null,
         applyingRemote: false,
-        initializedConfig: ""
+        pushing: false,
+        pulling: false,
+        config: null,
+        lastSha: null
       };
 
       const elements = {
@@ -1921,13 +1927,15 @@
         venueLibrary: document.querySelector("#venue-library"),
         newVenueInput: document.querySelector("#new-venue-input"),
         addVenueButton: document.querySelector("#add-venue-button"),
-        syncUrl: document.querySelector("#sync-url-input"),
-        syncKey: document.querySelector("#sync-key-input"),
-        syncEmail: document.querySelector("#sync-email-input"),
-        saveSyncConfigButton: document.querySelector("#save-sync-config-button"),
-        sendMagicLinkButton: document.querySelector("#send-magic-link-button"),
-        syncNowButton: document.querySelector("#sync-now-button"),
-        syncSignOutButton: document.querySelector("#sync-sign-out-button"),
+        githubOwner: document.querySelector("#github-owner-input"),
+        githubRepo: document.querySelector("#github-repo-input"),
+        githubBranch: document.querySelector("#github-branch-input"),
+        githubPath: document.querySelector("#github-path-input"),
+        githubToken: document.querySelector("#github-token-input"),
+        saveGithubConfigButton: document.querySelector("#save-github-config-button"),
+        githubPushButton: document.querySelector("#github-push-button"),
+        githubPullButton: document.querySelector("#github-pull-button"),
+        removeGithubConfigButton: document.querySelector("#remove-github-config-button"),
         syncStatus: document.querySelector("#sync-status"),
         syncStatusText: document.querySelector("#sync-status-text"),
         syncHelp: document.querySelector("#sync-help"),
@@ -1973,14 +1981,14 @@
 
       function loadSyncConfig() {
         try {
-          return JSON.parse(localStorage.getItem(SYNC_CONFIG_KEY) || "{}");
+          return JSON.parse(localStorage.getItem(GITHUB_SYNC_CONFIG_KEY) || "{}");
         } catch {
           return {};
         }
       }
 
       function saveSyncConfig(config) {
-        localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify(config));
+        localStorage.setItem(GITHUB_SYNC_CONFIG_KEY, JSON.stringify(config));
       }
 
       function loadVenues(concerts) {
@@ -2008,7 +2016,7 @@
 
       function saveConcerts() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state.concerts));
-        queueCloudSync();
+        queueGitHubSync();
       }
 
       function savePreferences() {
@@ -2016,12 +2024,12 @@
           roleColors: state.roleColors,
           statSettings: state.statSettings
         }));
-        queueCloudSync();
+        queueGitHubSync();
       }
 
       function saveVenues() {
         localStorage.setItem(VENUES_KEY, JSON.stringify(state.venues));
-        queueCloudSync();
+        queueGitHubSync();
       }
 
       function normalize(value) {
@@ -2447,7 +2455,7 @@
           throw new Error("Die Cloud-Daten haben ein ungültiges Format.");
         }
 
-        syncRuntime.applyingRemote = true;
+        githubRuntime.applyingRemote = true;
         try {
           state.concerts = payload.concerts.map(concert => ({
             id: concert.id,
@@ -2483,153 +2491,155 @@
           renderVenueOptions();
           render();
         } finally {
-          syncRuntime.applyingRemote = false;
+          githubRuntime.applyingRemote = false;
         }
       }
 
-      function queueCloudSync() {
-        if (syncRuntime.applyingRemote || !syncRuntime.client || !syncRuntime.user) return;
-        clearTimeout(syncRuntime.timer);
-        syncRuntime.timer = setTimeout(() => pushCloudData(), 700);
+      function githubApiUrl(config) {
+        const path = config.path.split("/").filter(Boolean).map(encodeURIComponent).join("/");
+        return `https://api.github.com/repos/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repo)}/contents/${path}`;
       }
 
-      async function pushCloudData() {
-        if (!syncRuntime.client || !syncRuntime.user) return;
-        clearTimeout(syncRuntime.timer);
-        setSyncStatus("working", "Änderungen werden synchronisiert …");
-        const { error } = await syncRuntime.client
-          .from("concert_archives")
-          .upsert({
-            user_id: syncRuntime.user.id,
-            payload: archivePayload(),
-            updated_at: new Date().toISOString()
-          }, { onConflict: "user_id" });
-
-        if (error) {
-          console.warn("Cloud-Synchronisierung fehlgeschlagen", error);
-          setSyncStatus("error", "Synchronisierung fehlgeschlagen");
-          elements.syncHelp.textContent = "Prüfe, ob du die SQL-Einrichtung in Supabase ausgeführt hast.";
-          return;
-        }
-        setSyncStatus("online", `Synchronisiert als ${syncRuntime.user.email || "Benutzer"}`);
+      function githubHeaders(config) {
+        return {
+          Accept: "application/vnd.github+json",
+          Authorization: `Bearer ${config.token}`,
+          "X-GitHub-Api-Version": "2022-11-28"
+        };
       }
 
-      async function pullCloudData() {
-        if (!syncRuntime.client || !syncRuntime.user) return;
-        setSyncStatus("working", "Cloud-Daten werden geladen …");
-        const { data, error } = await syncRuntime.client
-          .from("concert_archives")
-          .select("payload, updated_at")
-          .eq("user_id", syncRuntime.user.id)
-          .maybeSingle();
-
-        if (error) {
-          console.warn("Cloud-Daten konnten nicht geladen werden", error);
-          setSyncStatus("error", "Cloud-Verbindung unvollständig");
-          elements.syncHelp.textContent = "Führe zuerst die mitgelieferte supabase-setup.sql im Supabase SQL Editor aus.";
-          return;
+      function encodeBase64Utf8(value) {
+        const bytes = new TextEncoder().encode(value);
+        let binary = "";
+        const chunkSize = 8192;
+        for (let index = 0; index < bytes.length; index += chunkSize) {
+          binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
         }
-
-        if (data?.payload) {
-          try {
-            applyCloudPayload(data.payload);
-            setSyncStatus("online", `Synchronisiert als ${syncRuntime.user.email || "Benutzer"}`);
-          } catch (payloadError) {
-            console.warn(payloadError);
-            setSyncStatus("error", "Cloud-Daten konnten nicht gelesen werden");
-          }
-        } else {
-          await pushCloudData();
-        }
+        return btoa(binary);
       }
 
-      async function subscribeToCloud() {
-        if (!syncRuntime.client || !syncRuntime.user) return;
-        if (syncRuntime.channel) await syncRuntime.client.removeChannel(syncRuntime.channel);
-        syncRuntime.channel = syncRuntime.client
-          .channel(`concert-archive-${syncRuntime.user.id}`)
-          .on("postgres_changes", {
-            event: "*",
-            schema: "public",
-            table: "concert_archives",
-            filter: `user_id=eq.${syncRuntime.user.id}`
-          }, payload => {
-            if (payload.new?.payload) {
-              try {
-                applyCloudPayload(payload.new.payload);
-                setSyncStatus("online", `Synchronisiert als ${syncRuntime.user.email || "Benutzer"}`);
-              } catch (error) {
-                console.warn("Live-Aktualisierung konnte nicht übernommen werden", error);
-              }
+      function decodeBase64Utf8(value) {
+        const binary = atob(value.replace(/\s/g, ""));
+        const bytes = Uint8Array.from(binary, character => character.charCodeAt(0));
+        return new TextDecoder().decode(bytes);
+      }
+
+      function queueGitHubSync() {
+        if (githubRuntime.applyingRemote || !githubRuntime.config) return;
+        clearTimeout(githubRuntime.timer);
+        githubRuntime.timer = setTimeout(() => pushGitHubData(), 900);
+      }
+
+      async function pushGitHubData() {
+        const config = githubRuntime.config;
+        if (!config || githubRuntime.pushing) return false;
+        githubRuntime.pushing = true;
+        clearTimeout(githubRuntime.timer);
+        githubRuntime.timer = null;
+        setSyncStatus("working", "Änderungen werden zu GitHub übertragen …");
+
+        try {
+          const url = githubApiUrl(config);
+          const lookup = await fetch(`${url}?ref=${encodeURIComponent(config.branch)}`, {
+            headers: githubHeaders(config),
+            cache: "no-store"
+          });
+          let sha;
+          if (lookup.ok) {
+            const currentFile = await lookup.json();
+            sha = currentFile.sha;
+            if (githubRuntime.lastSha && githubRuntime.lastSha !== sha) {
+              throw new Error("Neuere Cloud-Daten gefunden: Bitte zuerst Cloud-Daten laden.");
             }
-          })
-          .subscribe();
+          } else if (lookup.status !== 404) {
+            throw new Error(`GitHub antwortet mit Status ${lookup.status}`);
+          }
+
+          const response = await fetch(url, {
+            method: "PUT",
+            headers: { ...githubHeaders(config), "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message: `Konzertliste synchronisieren (${new Date().toLocaleString("de-DE")})`,
+              content: encodeBase64Utf8(JSON.stringify(archivePayload(), null, 2)),
+              branch: config.branch,
+              ...(sha ? { sha } : {})
+            })
+          });
+
+          if (!response.ok) {
+            if (response.status === 409) throw new Error("GitHub-Konflikt: Lade zuerst die Cloud-Daten neu.");
+            throw new Error(`GitHub antwortet mit Status ${response.status}`);
+          }
+          const result = await response.json();
+          githubRuntime.lastSha = result.content?.sha || null;
+          setSyncStatus("online", `Mit GitHub synchronisiert · ${config.owner}/${config.repo}`);
+          elements.syncHelp.textContent = `Datendatei: ${config.path} auf Branch ${config.branch}`;
+          return true;
+        } catch (error) {
+          console.warn("GitHub-Synchronisierung fehlgeschlagen", error);
+          setSyncStatus("error", error.message || "GitHub-Synchronisierung fehlgeschlagen");
+          return false;
+        } finally {
+          githubRuntime.pushing = false;
+        }
       }
 
-      async function handleSignedIn(session) {
-        syncRuntime.user = session.user;
-        elements.syncEmail.value = session.user.email || elements.syncEmail.value;
-        elements.sendMagicLinkButton.hidden = true;
-        elements.syncNowButton.hidden = false;
-        elements.syncSignOutButton.hidden = false;
-        await pullCloudData();
-        await subscribeToCloud();
+      async function pullGitHubData() {
+        const config = githubRuntime.config;
+        if (!config || githubRuntime.pushing || githubRuntime.pulling) return false;
+        githubRuntime.pulling = true;
+        setSyncStatus("working", "Aktuelle Daten werden von GitHub geladen …");
+
+        try {
+          const response = await fetch(`${githubApiUrl(config)}?ref=${encodeURIComponent(config.branch)}`, {
+            headers: githubHeaders(config),
+            cache: "no-store"
+          });
+
+          if (response.status === 404) {
+            await pushGitHubData();
+            return;
+          }
+          if (!response.ok) throw new Error(`GitHub antwortet mit Status ${response.status}`);
+
+          const file = await response.json();
+          const payload = JSON.parse(decodeBase64Utf8(file.content));
+          applyCloudPayload(payload);
+          githubRuntime.lastSha = file.sha;
+          setSyncStatus("online", `Mit GitHub synchronisiert · ${config.owner}/${config.repo}`);
+          elements.syncHelp.textContent = `Datendatei: ${config.path} auf Branch ${config.branch}`;
+          return true;
+        } catch (error) {
+          console.warn("GitHub-Daten konnten nicht geladen werden", error);
+          setSyncStatus("error", error.message || "GitHub-Daten konnten nicht geladen werden");
+          return false;
+        } finally {
+          githubRuntime.pulling = false;
+        }
       }
 
-      async function initializeSync(force = false) {
+      async function initializeGitHubSync() {
         const config = loadSyncConfig();
-        elements.syncUrl.value = config.url || "";
-        elements.syncKey.value = config.key || "";
-        elements.syncEmail.value = config.email || elements.syncEmail.value || "";
+        elements.githubOwner.value = config.owner || "";
+        elements.githubRepo.value = config.repo || "";
+        elements.githubBranch.value = config.branch || "main";
+        elements.githubPath.value = config.path || "concert-data.json";
+        elements.githubToken.value = config.token || "";
 
-        if (!config.url || !config.key) {
+        if (!config.owner || !config.repo || !config.branch || !config.path || !config.token) {
+          githubRuntime.config = null;
+          elements.githubPushButton.hidden = true;
+          elements.githubPullButton.hidden = true;
+          elements.removeGithubConfigButton.hidden = true;
           setSyncStatus("", "Nur lokal gespeichert");
           return;
         }
-        if (!window.supabase?.createClient) {
-          setSyncStatus("error", "Supabase-Bibliothek nicht geladen");
-          return;
-        }
 
-        const signature = `${config.url}|${config.key}`;
-        if (!force && syncRuntime.initializedConfig === signature && syncRuntime.client) return;
-
-        if (syncRuntime.authSubscription) syncRuntime.authSubscription.unsubscribe();
-        if (syncRuntime.channel && syncRuntime.client) await syncRuntime.client.removeChannel(syncRuntime.channel);
-
-        syncRuntime.initializedConfig = signature;
-        syncRuntime.client = window.supabase.createClient(config.url, config.key, {
-          auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
-        });
-
-        const { data: authListener } = syncRuntime.client.auth.onAuthStateChange((event, session) => {
-          window.setTimeout(() => {
-            if (session?.user) {
-              handleSignedIn(session);
-            } else if (event === "SIGNED_OUT") {
-              syncRuntime.user = null;
-              elements.sendMagicLinkButton.hidden = false;
-              elements.syncNowButton.hidden = true;
-              elements.syncSignOutButton.hidden = true;
-              setSyncStatus("", "Verbunden, aber nicht angemeldet");
-            }
-          }, 0);
-        });
-        syncRuntime.authSubscription = authListener.subscription;
-
-        const { data, error } = await syncRuntime.client.auth.getSession();
-        if (error) {
-          setSyncStatus("error", "Anmeldestatus konnte nicht geladen werden");
-          return;
-        }
-        if (data.session?.user) {
-          await handleSignedIn(data.session);
-        } else {
-          elements.sendMagicLinkButton.hidden = false;
-          elements.syncNowButton.hidden = true;
-          elements.syncSignOutButton.hidden = true;
-          setSyncStatus("", "Bereit für die Anmeldung");
-        }
+        githubRuntime.config = config;
+        elements.githubPushButton.hidden = false;
+        elements.githubPullButton.hidden = false;
+        elements.removeGithubConfigButton.hidden = false;
+        return pullGitHubData();
       }
 
       function openConcertForm() {
@@ -2766,75 +2776,52 @@
         elements.settingsDialog.showModal();
       });
 
-      elements.saveSyncConfigButton.addEventListener("click", async () => {
-        const url = elements.syncUrl.value.trim().replace(/\/$/, "");
-        const key = elements.syncKey.value.trim();
-        const email = elements.syncEmail.value.trim();
-        if (!/^https:\/\//i.test(url) || !key) {
-          setSyncStatus("error", "Projekt-URL oder Schlüssel fehlt");
+      elements.saveGithubConfigButton.addEventListener("click", async () => {
+        const config = {
+          owner: elements.githubOwner.value.trim(),
+          repo: elements.githubRepo.value.trim(),
+          branch: elements.githubBranch.value.trim() || "main",
+          path: elements.githubPath.value.trim().replace(/^\/+/, "") || "concert-data.json",
+          token: elements.githubToken.value.trim()
+        };
+        if (!config.owner || !config.repo || !config.token || config.path.includes("..")) {
+          setSyncStatus("error", "GitHub-Angaben oder Token fehlen");
           return;
         }
-        saveSyncConfig({ url, key, email });
-        setSyncStatus("working", "Verbindung wird eingerichtet …");
-        await initializeSync(true);
-        showToast("Cloud-Verbindung gespeichert.");
+        saveSyncConfig(config);
+        githubRuntime.config = config;
+        setSyncStatus("working", "GitHub-Verbindung wird geprüft …");
+        const connected = await initializeGitHubSync();
+        showToast(connected
+          ? "GitHub-Verbindung gespeichert."
+          : "Einstellungen gespeichert – GitHub-Verbindung bitte prüfen.");
       });
 
-      elements.sendMagicLinkButton.addEventListener("click", async () => {
-        const email = elements.syncEmail.value.trim();
-        if (!syncRuntime.client) {
-          await initializeSync();
+      elements.githubPushButton.addEventListener("click", async () => {
+        if (await pushGitHubData()) {
+          showToast("Aktuelle Liste wurde zu GitHub übertragen.");
         }
-        if (!syncRuntime.client) {
-          setSyncStatus("error", "Speichere zuerst die Cloud-Verbindung");
-          return;
-        }
-        if (!email || !email.includes("@")) {
-          setSyncStatus("error", "Bitte eine gültige E-Mail eingeben");
-          return;
-        }
-        if (window.location.protocol === "file:") {
-          setSyncStatus("error", "Anmeldung über die veröffentlichte GitHub-Seite öffnen");
-          elements.syncHelp.textContent = "Magic Links benötigen deine veröffentlichte https://-Adresse, nicht die lokale Datei.";
-          return;
-        }
-
-        const config = loadSyncConfig();
-        saveSyncConfig({ ...config, email });
-        setSyncStatus("working", "Anmeldelink wird gesendet …");
-        const redirectTo = `${window.location.origin}${window.location.pathname}`;
-        const { error } = await syncRuntime.client.auth.signInWithOtp({
-          email,
-          options: { emailRedirectTo: redirectTo, shouldCreateUser: true }
-        });
-        if (error) {
-          console.warn("Anmeldelink konnte nicht gesendet werden", error);
-          setSyncStatus("error", "Anmeldelink konnte nicht gesendet werden");
-          return;
-        }
-        setSyncStatus("working", "Anmeldelink wurde per E-Mail gesendet");
-        elements.syncHelp.textContent = "Öffne die E-Mail auf diesem Gerät und klicke den Link. Danach startet die Synchronisierung automatisch.";
       });
 
-      elements.syncNowButton.addEventListener("click", async () => {
-        await pushCloudData();
-        showToast("Cloud-Daten wurden aktualisiert.");
+      elements.githubPullButton.addEventListener("click", async () => {
+        if (await pullGitHubData()) {
+          showToast("Cloud-Daten wurden geladen.");
+        }
       });
 
-      elements.syncSignOutButton.addEventListener("click", async () => {
-        if (!syncRuntime.client) return;
-        const { error } = await syncRuntime.client.auth.signOut({ scope: "local" });
-        if (error) {
-          setSyncStatus("error", "Abmelden fehlgeschlagen");
-          return;
-        }
-        syncRuntime.user = null;
-        if (syncRuntime.channel) await syncRuntime.client.removeChannel(syncRuntime.channel);
-        syncRuntime.channel = null;
-        elements.sendMagicLinkButton.hidden = false;
-        elements.syncNowButton.hidden = true;
-        elements.syncSignOutButton.hidden = true;
-        setSyncStatus("", "Abgemeldet – lokale Daten bleiben erhalten");
+      elements.removeGithubConfigButton.addEventListener("click", () => {
+        clearTimeout(githubRuntime.timer);
+        githubRuntime.timer = null;
+        localStorage.removeItem(GITHUB_SYNC_CONFIG_KEY);
+        githubRuntime.config = null;
+        githubRuntime.lastSha = null;
+        elements.githubToken.value = "";
+        elements.githubPushButton.hidden = true;
+        elements.githubPullButton.hidden = true;
+        elements.removeGithubConfigButton.hidden = true;
+        setSyncStatus("", "Nur lokal gespeichert");
+        elements.syncHelp.textContent = "Die lokale Konzertliste bleibt vollständig erhalten.";
+        showToast("GitHub-Verbindung entfernt.");
       });
 
       elements.mobileStatsToggle.addEventListener("click", () => {
@@ -3014,13 +3001,18 @@
       document.addEventListener("visibilitychange", () => {
         if (!document.hidden) {
           render();
-          if (syncRuntime.user) pullCloudData();
+          if (githubRuntime.config && !githubRuntime.timer) pullGitHubData();
         }
       });
 
       renderVenueOptions();
       render();
-      initializeSync();
+      initializeGitHubSync();
+      window.setInterval(() => {
+        if (githubRuntime.config && !githubRuntime.timer && !githubRuntime.pushing && !githubRuntime.pulling && !document.hidden) {
+          pullGitHubData();
+        }
+      }, 60000);
     })();
   </script>
 </body>
