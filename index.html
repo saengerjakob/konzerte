@@ -569,25 +569,56 @@
 
     .concert-list {
       display: grid;
-      gap: 12px;
+      gap: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-top: 0;
+      border-radius: 0 0 14px 14px;
+      background: #fff;
+    }
+
+    .concert-list.empty-list {
+      overflow: visible;
+      border: 0;
+      background: transparent;
+    }
+
+    .concert-list-header {
+      display: grid;
+      grid-template-columns: minmax(220px, 1.45fr) minmax(170px, 1fr) 118px 70px;
+      gap: 16px;
+      align-items: center;
+      padding: 9px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px 14px 0 0;
+      color: var(--muted);
+      background: var(--surface-soft);
+      font-size: 0.65rem;
+      font-weight: 850;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
     }
 
     .concert-card {
       display: grid;
-      grid-template-columns: minmax(0, 1.3fr) minmax(190px, 0.7fr) auto;
-      gap: 24px;
+      grid-template-columns: minmax(220px, 1.45fr) minmax(170px, 1fr) 118px 70px;
+      gap: 16px;
       align-items: center;
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
+      min-height: 58px;
+      padding: 9px 14px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
       background: #fff;
-      transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+      transition: background 140ms ease;
+    }
+
+    .concert-card:last-child {
+      border-bottom: 0;
     }
 
     .concert-card:hover {
-      border-color: #c7cac4;
-      transform: translateY(-1px);
-      box-shadow: 0 12px 30px rgba(34, 45, 40, 0.07);
+      background: #f8fbf9;
     }
 
     .band-info {
@@ -596,9 +627,8 @@
 
     .main-band {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 5px;
+      align-items: center;
+      gap: 7px;
       min-width: 0;
     }
 
@@ -606,56 +636,60 @@
       max-width: 100%;
       overflow: hidden;
       margin: 0;
-      font-size: clamp(1.24rem, 2.5vw, 1.55rem);
-      line-height: 1.08;
-      letter-spacing: -0.04em;
+      font-size: 0.92rem;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
     .role-label {
       flex: 0 0 auto;
-      order: -1;
-      padding: 3px 8px;
+      padding: 2px 6px;
       border-radius: 99px;
       color: var(--muted);
       background: var(--surface-soft);
-      font-size: 0.62rem;
+      font-size: 0.52rem;
       font-weight: 850;
       letter-spacing: 0.05em;
       text-transform: uppercase;
     }
 
     .supports-block {
-      margin-top: 17px;
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      gap: 6px;
+      margin-top: 4px;
     }
 
     .supports-label {
-      display: block;
-      margin-bottom: 7px;
+      flex: 0 0 auto;
       color: var(--muted);
-      font-size: 0.65rem;
+      font-size: 0.55rem;
       font-weight: 900;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
     .supports {
       display: flex;
       flex-wrap: wrap;
-      gap: 7px;
+      min-width: 0;
+      gap: 4px;
     }
 
     .support-chip {
       max-width: 100%;
       overflow: hidden;
-      padding: 6px 10px;
+      padding: 2px 6px;
       border: 1px solid #dfe4e1;
-      border-radius: 9px;
+      border-radius: 6px;
       color: #46504d;
       background: #f1f4f2;
-      font-size: 0.79rem;
-      font-weight: 780;
+      font-size: 0.67rem;
+      line-height: 1.25;
+      font-weight: 750;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
@@ -681,26 +715,20 @@
     }
 
     .event-meta {
-      display: grid;
-      gap: 12px;
-      min-width: 0;
-      padding-left: 20px;
-      border-left: 1px solid var(--line);
+      display: contents;
     }
 
     .meta-item {
-      display: grid;
-      grid-template-columns: 17px minmax(0, 1fr);
-      gap: 9px;
-      align-items: start;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       min-width: 0;
       color: var(--muted);
     }
 
     .meta-item svg {
-      width: 17px;
-      height: 17px;
-      margin-top: 1px;
+      width: 14px;
+      height: 14px;
       flex: 0 0 auto;
     }
 
@@ -708,15 +736,34 @@
     .meta-item time {
       overflow: hidden;
       color: var(--ink);
-      font-size: 0.8rem;
-      font-weight: 780;
+      font-size: 0.78rem;
+      font-weight: 650;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
+    .date-cell time {
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
     .card-actions {
       display: flex;
-      gap: 5px;
+      justify-content: flex-end;
+      gap: 2px;
+      opacity: 0.58;
+      transition: opacity 140ms ease;
+    }
+
+    .concert-card:hover .card-actions,
+    .concert-card:focus-within .card-actions {
+      opacity: 1;
+    }
+
+    .concert-card .icon-button {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
     }
 
     .icon-button {
@@ -1034,22 +1081,45 @@
         grid-column: 1 / -1;
       }
 
+      .concert-list-header {
+        display: none;
+      }
+
+      .concert-list {
+        border-top: 1px solid var(--line);
+        border-radius: 14px;
+      }
+
       .concert-card {
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 16px;
+        gap: 6px 10px;
+        min-height: 0;
+        padding: 11px 12px;
       }
 
       .event-meta {
-        grid-column: 1;
-        padding: 14px 0 0;
-        border-top: 1px solid var(--line);
-        border-left: 0;
+        display: flex;
+        grid-column: 1 / -1;
+        grid-row: 2;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+      }
+
+      .venue-cell {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .date-cell {
+        flex: 0 0 auto;
       }
 
       .card-actions {
         grid-column: 2;
-        grid-row: 1 / 3;
-        flex-direction: column;
+        grid-row: 1;
+        flex-direction: row;
+        opacity: 1;
       }
 
       .sidebar {
@@ -1139,24 +1209,34 @@
       }
 
       .concert-card {
-        gap: 13px;
-        padding: 17px;
+        gap: 6px 8px;
+        padding: 10px;
       }
 
       .main-band {
-        gap: 5px;
+        gap: 6px;
       }
 
       .main-band h3 {
-        font-size: 1.2rem;
+        font-size: 0.9rem;
       }
 
       .supports-block {
-        margin-top: 14px;
+        gap: 5px;
+        margin-top: 4px;
       }
 
       .event-meta {
-        gap: 8px;
+        gap: 10px;
+      }
+
+      .meta-item svg {
+        display: none;
+      }
+
+      .meta-item strong,
+      .meta-item time {
+        font-size: 0.71rem;
       }
 
       .sidebar-card:first-child .stats-inner {
@@ -1325,7 +1405,13 @@
             </label>
           </div>
 
-          <div class="concert-list" id="concert-list" aria-live="polite"></div>
+          <div class="concert-list-header" id="concert-list-header" aria-hidden="true" hidden>
+            <span>Band &amp; Vorbands</span>
+            <span>Ort</span>
+            <span>Datum</span>
+            <span>Aktionen</span>
+          </div>
+          <div class="concert-list empty-list" id="concert-list" aria-live="polite"></div>
 
           <div class="legend" id="role-legend" hidden>
             <span class="legend-item"><span class="legend-dot"></span>Hauptact</span>
@@ -1437,6 +1523,7 @@
         submitButton: document.querySelector("#submit-button"),
         cancelEditButton: document.querySelector("#cancel-edit-button"),
         list: document.querySelector("#concert-list"),
+        listHeader: document.querySelector("#concert-list-header"),
         listSummary: document.querySelector("#list-summary"),
         visibleCount: document.querySelector("#visible-count"),
         search: document.querySelector("#search-input"),
@@ -1551,6 +1638,14 @@
         return new Intl.DateTimeFormat("de-DE", {
           day: "2-digit",
           month: "long",
+          year: "numeric"
+        }).format(parseDate(dateString));
+      }
+
+      function formatCompactDate(dateString) {
+        return new Intl.DateTimeFormat("de-DE", {
+          day: "2-digit",
+          month: "2-digit",
           year: "numeric"
         }).format(parseDate(dateString));
       }
@@ -1709,13 +1804,13 @@
               </div>
             </div>
             <div class="event-meta">
-              <div class="meta-item" title="${escapeHtml(concert.venue)}">
+              <div class="meta-item venue-cell" title="${escapeHtml(concert.venue)}">
                 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
                 <strong>${escapeHtml(concert.venue)}</strong>
               </div>
-              <div class="meta-item">
+              <div class="meta-item date-cell" title="${escapeHtml(formatDate(concert.date))}">
                 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v4M18 2v4M3 9h18"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect></svg>
-                <time datetime="${escapeHtml(concert.date)}">${escapeHtml(formatDate(concert.date))}</time>
+                <time datetime="${escapeHtml(concert.date)}">${escapeHtml(formatCompactDate(concert.date))}</time>
               </div>
             </div>
             <div class="card-actions" aria-label="Aktionen für ${escapeHtml(concert.mainBand)}">
@@ -1731,8 +1826,11 @@
 
       function renderList() {
         const concerts = getVisibleConcerts();
+        const hasRows = concerts.length > 0;
         elements.list.classList.toggle("role-colors", state.roleColors);
-        elements.roleLegend.hidden = !state.roleColors || state.concerts.length === 0;
+        elements.list.classList.toggle("empty-list", !hasRows);
+        elements.listHeader.hidden = !hasRows;
+        elements.roleLegend.hidden = !state.roleColors || !hasRows;
         elements.visibleCount.textContent = `${concerts.length} ${concerts.length === 1 ? "Eintrag" : "Einträge"}`;
 
         if (state.concerts.length === 0) {
