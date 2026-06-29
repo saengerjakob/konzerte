@@ -486,6 +486,57 @@
       margin-top: 22px;
     }
 
+    .form-toggle {
+      justify-content: flex-start;
+      width: 100%;
+      min-height: 48px;
+      color: var(--ink);
+    }
+
+    .settings-section {
+      margin-top: 26px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .settings-section h3 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .settings-section > p {
+      margin: 5px 0 15px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .settings-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .setting-check {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      gap: 9px;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #fff;
+      font-size: 0.76rem;
+      font-weight: 730;
+      cursor: pointer;
+    }
+
+    .setting-check input {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--accent);
+    }
+
     .toolbar {
       display: grid;
       grid-template-columns: minmax(180px, 1fr) minmax(190px, 230px) auto;
@@ -714,6 +765,47 @@
       border-color: #c9e1ed;
     }
 
+    .upcoming-badge {
+      flex: 0 0 auto;
+      padding: 2px 6px;
+      border-radius: 99px;
+      color: #6d7471;
+      background: #e5e6e2;
+      font-size: 0.52rem;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .rating-display {
+      flex: 0 0 auto;
+      color: #9a6c1b;
+      font-size: 0.67rem;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .concert-card.upcoming {
+      color: #747b78;
+      background: #f2f2ef;
+    }
+
+    .concert-card.upcoming:hover {
+      background: #eeeeea;
+    }
+
+    .concert-card.upcoming .main-band h3,
+    .concert-card.upcoming .meta-item strong,
+    .concert-card.upcoming .meta-item time {
+      color: #777d7a;
+    }
+
+    .concert-card.upcoming .support-chip {
+      color: #7c827f;
+      border-color: #dedfda;
+      background: #e9e9e5;
+    }
+
     .event-meta {
       display: contents;
     }
@@ -849,6 +941,17 @@
       margin: 0 0 18px;
       font-size: 1rem;
       letter-spacing: -0.02em;
+    }
+
+    .sidebar-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .mobile-stats-toggle {
+      display: none;
     }
 
     .stat-primary {
@@ -1122,16 +1225,86 @@
         opacity: 1;
       }
 
+      .main-column {
+        grid-row: 2;
+      }
+
       .sidebar {
+        grid-row: 1;
         grid-template-columns: 1fr;
+        gap: 10px;
       }
 
       .sidebar-card:first-child {
         grid-column: auto;
+        padding: 14px 16px;
       }
 
       .sidebar-card:first-child .stats-inner {
-        grid-template-columns: 130px 1fr;
+        display: block;
+      }
+
+      .sidebar-title-row h2 {
+        margin: 0;
+        font-size: 0.84rem;
+      }
+
+      .mobile-stats-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 8px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--muted);
+        background: var(--surface-soft);
+        font-size: 0.66rem;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .mobile-stats-toggle svg {
+        width: 13px;
+        height: 13px;
+        transition: transform 160ms ease;
+      }
+
+      .stat-primary {
+        display: flex;
+        align-items: baseline;
+        gap: 9px;
+        margin: 8px 0 0;
+        padding: 0;
+        border: 0;
+      }
+
+      .stat-primary strong {
+        font-size: 2.1rem;
+      }
+
+      .stat-primary span {
+        margin: 0;
+        font-size: 0.7rem;
+      }
+
+      .sidebar .stat-grid,
+      .sidebar .sidebar-card:not(:first-child) {
+        display: none;
+      }
+
+      .sidebar.mobile-expanded .stat-grid {
+        display: grid;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
+
+      .sidebar.mobile-expanded .sidebar-card:not(:first-child) {
+        display: block;
+      }
+
+      .sidebar.mobile-expanded .mobile-stats-toggle svg {
+        transform: rotate(180deg);
       }
     }
 
@@ -1239,15 +1412,8 @@
         font-size: 0.71rem;
       }
 
-      .sidebar-card:first-child .stats-inner {
-        display: block;
-      }
-
-      .stat-primary {
-        margin-bottom: 20px;
-        padding: 0 0 20px;
-        border-right: 0;
-        border-bottom: 1px solid var(--line);
+      .settings-options {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -1354,6 +1520,32 @@
                 <label for="date-input">Datum <span class="required" aria-hidden="true">*</span></label>
                 <input class="input" id="date-input" name="date" type="date" required>
               </div>
+
+              <div class="field">
+                <span class="settings-label">Status</span>
+                <label class="toggle form-toggle" title="Bis zu diesem Datum ausgegraut anzeigen und nicht mitzählen">
+                  <input id="planned-input" name="planned" type="checkbox">
+                  <span class="switch" aria-hidden="true"></span>
+                  Konzert steht noch bevor
+                </label>
+              </div>
+
+              <div class="field">
+                <label for="rating-input">Bewertung</label>
+                <select class="select" id="rating-input" name="rating">
+                  <option value="0">Noch nicht bewertet</option>
+                  <option value="1">★ 1 von 10</option>
+                  <option value="2">★ 2 von 10</option>
+                  <option value="3">★ 3 von 10</option>
+                  <option value="4">★ 4 von 10</option>
+                  <option value="5">★ 5 von 10</option>
+                  <option value="6">★ 6 von 10</option>
+                  <option value="7">★ 7 von 10</option>
+                  <option value="8">★ 8 von 10</option>
+                  <option value="9">★ 9 von 10</option>
+                  <option value="10">★ 10 von 10</option>
+                </select>
+              </div>
             </div>
 
             <div class="form-actions">
@@ -1395,6 +1587,9 @@
                 <option value="venue-desc">Ort: Z bis A</option>
                 <option value="supports-desc">Vorbands: viele zuerst</option>
                 <option value="supports-asc">Vorbands: wenige zuerst</option>
+                <option value="rating-desc">Bewertung: beste zuerst</option>
+                <option value="rating-asc">Bewertung: niedrigste zuerst</option>
+                <option value="upcoming-first">Status: bevorstehende zuerst</option>
               </select>
             </div>
 
@@ -1422,43 +1617,38 @@
 
       <aside class="sidebar" aria-label="Statistiken">
         <section class="sidebar-card">
-          <h2>Deine Live-Bilanz</h2>
+          <div class="sidebar-title-row">
+            <h2>Deine Live-Bilanz</h2>
+            <button class="mobile-stats-toggle" id="mobile-stats-toggle" type="button" aria-expanded="false" aria-controls="stat-grid">
+              <span>Statistiken</span>
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+          </div>
           <div class="stats-inner">
             <div class="stat-primary">
               <strong id="stat-concerts">0</strong>
-              <span>Konzerte insgesamt</span>
+              <span>erlebte Konzerte</span>
             </div>
-            <div class="stat-grid">
-              <div class="stat-item">
-                <strong id="stat-bands">0</strong>
-                <span>verschiedene Bands</span>
-              </div>
-              <div class="stat-item">
-                <strong id="stat-appearances">0</strong>
-                <span>Live-Auftritte</span>
-              </div>
-              <div class="stat-item">
-                <strong id="stat-places">0</strong>
-                <span>verschiedene Orte</span>
-              </div>
-              <div class="stat-item">
-                <strong id="stat-year">0</strong>
-                <span>Konzerte dieses Jahr</span>
-              </div>
-            </div>
+            <div class="stat-grid" id="stat-grid"></div>
           </div>
         </section>
 
-        <section class="sidebar-card">
+        <section class="sidebar-card" id="top-bands-card">
           <h2>Deine meistgesehenen Bands</h2>
           <ol class="top-list" id="top-bands-list"></ol>
           <p class="no-stats" id="top-bands-empty">Hier erscheinen deine Top 5.</p>
         </section>
 
-        <section class="sidebar-card">
+        <section class="sidebar-card" id="top-venues-card">
           <h2>Deine Konzertorte</h2>
           <ol class="top-list" id="top-venues-list"></ol>
           <p class="no-stats" id="top-venues-empty">Noch kein Lieblingsort in Sicht.</p>
+        </section>
+
+        <section class="sidebar-card" id="top-rated-card">
+          <h2>Deine bestbewerteten Konzerte</h2>
+          <ol class="top-list" id="top-rated-list"></ol>
+          <p class="no-stats" id="top-rated-empty">Noch keine Bewertungen vergeben.</p>
         </section>
       </aside>
     </div>
@@ -1484,6 +1674,24 @@
         </div>
         <span class="settings-label">Gespeicherte Orte</span>
         <div class="venue-library" id="venue-library"></div>
+
+        <section class="settings-section" aria-labelledby="stats-settings-title">
+          <h3 id="stats-settings-title">Statistiken anzeigen</h3>
+          <p>Wähle aus, welche Kennzahlen und Ranglisten in deiner Bilanz erscheinen.</p>
+          <div class="settings-options">
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="bands"> Verschiedene Bands</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="appearances"> Live-Auftritte</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="places"> Konzertorte</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="year"> Konzerte dieses Jahr</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="upcoming"> Bevorstehende Konzerte</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="averageRating"> Ø Bewertung</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="activeYears"> Aktive Konzertjahre</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="favoriteMonth"> Beliebtester Konzertmonat</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="topBands"> Meistgesehene Bands</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="topVenues"> Häufigste Konzertorte</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="topRated"> Bestbewertete Konzerte</label>
+          </div>
+        </section>
       </div>
       <footer class="settings-footer">
         <button class="button" type="submit">Änderungen speichern</button>
@@ -1500,15 +1708,18 @@
       const STORAGE_KEY = "meine-konzertliste-v1";
       const PREFERENCES_KEY = "meine-konzertliste-einstellungen-v1";
       const VENUES_KEY = "meine-konzertliste-orte-v1";
+      const DEFAULT_STATS = ["bands", "appearances", "places", "year", "upcoming", "averageRating", "topBands", "topVenues"];
 
       const initialConcerts = loadConcerts();
+      const savedPreferences = loadPreferences();
 
       const state = {
         concerts: initialConcerts,
         venues: loadVenues(initialConcerts),
         search: "",
         sort: "date-desc",
-        roleColors: loadPreferences().roleColors ?? false
+        roleColors: savedPreferences.roleColors ?? false,
+        statSettings: Array.isArray(savedPreferences.statSettings) ? savedPreferences.statSettings : DEFAULT_STATS
       };
 
       const elements = {
@@ -1520,6 +1731,8 @@
         supportBands: document.querySelector("#support-input"),
         venue: document.querySelector("#venue-input"),
         date: document.querySelector("#date-input"),
+        planned: document.querySelector("#planned-input"),
+        rating: document.querySelector("#rating-input"),
         submitButton: document.querySelector("#submit-button"),
         cancelEditButton: document.querySelector("#cancel-edit-button"),
         list: document.querySelector("#concert-list"),
@@ -1538,20 +1751,23 @@
         venueLibrary: document.querySelector("#venue-library"),
         newVenueInput: document.querySelector("#new-venue-input"),
         addVenueButton: document.querySelector("#add-venue-button"),
+        statSettingInputs: document.querySelectorAll('[name="stat-setting"]'),
         exportButton: document.querySelector("#export-button"),
         importFile: document.querySelector("#import-file"),
         toast: document.querySelector("#toast"),
-        stats: {
-          concerts: document.querySelector("#stat-concerts"),
-          bands: document.querySelector("#stat-bands"),
-          appearances: document.querySelector("#stat-appearances"),
-          places: document.querySelector("#stat-places"),
-          year: document.querySelector("#stat-year")
-        },
+        sidebar: document.querySelector(".sidebar"),
+        mobileStatsToggle: document.querySelector("#mobile-stats-toggle"),
+        statConcerts: document.querySelector("#stat-concerts"),
+        statGrid: document.querySelector("#stat-grid"),
+        topBandsCard: document.querySelector("#top-bands-card"),
         topBandsList: document.querySelector("#top-bands-list"),
         topBandsEmpty: document.querySelector("#top-bands-empty"),
+        topVenuesCard: document.querySelector("#top-venues-card"),
         topVenuesList: document.querySelector("#top-venues-list"),
-        topVenuesEmpty: document.querySelector("#top-venues-empty")
+        topVenuesEmpty: document.querySelector("#top-venues-empty"),
+        topRatedCard: document.querySelector("#top-rated-card"),
+        topRatedList: document.querySelector("#top-rated-list"),
+        topRatedEmpty: document.querySelector("#top-rated-empty")
       };
 
       elements.roleColorToggle.checked = state.roleColors;
@@ -1603,7 +1819,10 @@
       }
 
       function savePreferences() {
-        localStorage.setItem(PREFERENCES_KEY, JSON.stringify({ roleColors: state.roleColors }));
+        localStorage.setItem(PREFERENCES_KEY, JSON.stringify({
+          roleColors: state.roleColors,
+          statSettings: state.statSettings
+        }));
       }
 
       function saveVenues() {
@@ -1648,6 +1867,27 @@
           month: "2-digit",
           year: "numeric"
         }).format(parseDate(dateString));
+      }
+
+      function todayString() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function isUpcoming(concert) {
+        return concert.planned === true && concert.date > todayString();
+      }
+
+      function completedConcerts() {
+        return state.concerts.filter(concert => !isUpcoming(concert));
+      }
+
+      function concertRating(concert) {
+        const rating = Number(concert.rating);
+        return Number.isInteger(rating) && rating >= 1 && rating <= 10 ? rating : 0;
       }
 
       function getDateParts(dateString) {
@@ -1731,8 +1971,8 @@
         return [...counts.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "de", { sensitivity: "base" }));
       }
 
-      function allBandAppearances() {
-        return state.concerts.flatMap(concert => [concert.mainBand, ...concert.supportBands]);
+      function allBandAppearances(concerts = completedConcerts()) {
+        return concerts.flatMap(concert => [concert.mainBand, ...concert.supportBands]);
       }
 
       function getBandFrequencyMap() {
@@ -1770,6 +2010,12 @@
               return b.supportBands.length - a.supportBands.length || b.date.localeCompare(a.date);
             case "supports-asc":
               return a.supportBands.length - b.supportBands.length || b.date.localeCompare(a.date);
+            case "rating-desc":
+              return concertRating(b) - concertRating(a) || b.date.localeCompare(a.date);
+            case "rating-asc":
+              return (concertRating(a) || 11) - (concertRating(b) || 11) || b.date.localeCompare(a.date);
+            case "upcoming-first":
+              return Number(isUpcoming(b)) - Number(isUpcoming(a)) || a.date.localeCompare(b.date);
             case "date-desc":
             default:
               return b.date.localeCompare(a.date);
@@ -1787,16 +2033,20 @@
       }
 
       function renderConcertCard(concert) {
+        const upcoming = isUpcoming(concert);
+        const rating = concertRating(concert);
         const supports = concert.supportBands.length
           ? concert.supportBands.map(band => `<span class="support-chip" title="Vorband">${escapeHtml(band)}</span>`).join("")
           : `<span class="support-chip empty">Keine Vorband eingetragen</span>`;
 
         return `
-          <article class="concert-card" data-id="${escapeHtml(concert.id)}">
+          <article class="concert-card${upcoming ? " upcoming" : ""}" data-id="${escapeHtml(concert.id)}">
             <div class="band-info">
               <div class="main-band">
                 <h3 title="${escapeHtml(concert.mainBand)}">${escapeHtml(concert.mainBand)}</h3>
                 <span class="role-label">Hauptact</span>
+                ${upcoming ? `<span class="upcoming-badge">Bevorstehend</span>` : ""}
+                ${rating ? `<span class="rating-display" title="${rating} von 10 Sternen">★ ${rating}/10</span>` : ""}
               </div>
               <div class="supports-block">
                 <span class="supports-label">Vorbands</span>
@@ -1846,7 +2096,10 @@
           return;
         }
 
-        elements.listSummary.textContent = `${state.concerts.length} ${state.concerts.length === 1 ? "Abend" : "Abende"}, an die du dich erinnern willst.`;
+        const upcomingCount = state.concerts.filter(isUpcoming).length;
+        elements.listSummary.textContent = upcomingCount
+          ? `${state.concerts.length} Einträge · ${upcomingCount} ${upcomingCount === 1 ? "Konzert steht" : "Konzerte stehen"} noch bevor.`
+          : `${state.concerts.length} ${state.concerts.length === 1 ? "Abend" : "Abende"}, an die du dich erinnern willst.`;
 
         if (concerts.length === 0) {
           elements.list.innerHTML = `
@@ -1875,19 +2128,56 @@
       }
 
       function renderStats() {
-        const bands = allBandAppearances();
+        const concerts = completedConcerts();
+        const bands = allBandAppearances(concerts);
         const uniqueBands = new Set(bands.map(keyFor));
-        const uniqueVenues = new Set(state.concerts.map(concert => keyFor(concert.venue)));
+        const uniqueVenues = new Set(concerts.map(concert => keyFor(concert.venue)));
         const currentYear = String(new Date().getFullYear());
+        const ratings = concerts.map(concertRating).filter(Boolean);
+        const activeYears = new Set(concerts.map(concert => concert.date.slice(0, 4)));
+        const monthCounts = countValues(concerts.map(concert => String(parseDate(concert.date).getMonth())));
+        const favoriteMonth = monthCounts.length
+          ? new Intl.DateTimeFormat("de-DE", { month: "short" }).format(new Date(2020, Number(monthCounts[0].name), 1)).replace(".", "")
+          : "–";
 
-        elements.stats.concerts.textContent = state.concerts.length;
-        elements.stats.bands.textContent = uniqueBands.size;
-        elements.stats.appearances.textContent = bands.length;
-        elements.stats.places.textContent = uniqueVenues.size;
-        elements.stats.year.textContent = state.concerts.filter(concert => concert.date.startsWith(currentYear)).length;
+        const metrics = {
+          bands: { value: uniqueBands.size, label: "verschiedene Bands" },
+          appearances: { value: bands.length, label: "Live-Auftritte" },
+          places: { value: uniqueVenues.size, label: "verschiedene Orte" },
+          year: { value: concerts.filter(concert => concert.date.startsWith(currentYear)).length, label: "Konzerte dieses Jahr" },
+          upcoming: { value: state.concerts.filter(isUpcoming).length, label: "bevorstehende Konzerte" },
+          averageRating: {
+            value: ratings.length ? `${(ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length).toLocaleString("de-DE", { maximumFractionDigits: 1 })} ★` : "–",
+            label: "Ø Bewertung"
+          },
+          activeYears: { value: activeYears.size, label: "aktive Konzertjahre" },
+          favoriteMonth: { value: favoriteMonth, label: "häufigster Konzertmonat" }
+        };
+
+        elements.statConcerts.textContent = concerts.length;
+        elements.statGrid.innerHTML = state.statSettings
+          .filter(id => metrics[id])
+          .map(id => `<div class="stat-item"><strong>${escapeHtml(metrics[id].value)}</strong><span>${escapeHtml(metrics[id].label)}</span></div>`)
+          .join("");
 
         renderTopList(elements.topBandsList, elements.topBandsEmpty, bands, "Mal", "Mal");
-        renderTopList(elements.topVenuesList, elements.topVenuesEmpty, state.concerts.map(concert => concert.venue), "Konzert", "Konzerte");
+        renderTopList(elements.topVenuesList, elements.topVenuesEmpty, concerts.map(concert => concert.venue), "Konzert", "Konzerte");
+
+        const topRated = concerts
+          .filter(concert => concertRating(concert) > 0)
+          .sort((a, b) => concertRating(b) - concertRating(a) || b.date.localeCompare(a.date))
+          .slice(0, 5);
+        elements.topRatedList.innerHTML = topRated.map(concert => `
+          <li>
+            <span class="rank">★</span>
+            <span class="top-name" title="${escapeHtml(concert.mainBand)}">${escapeHtml(concert.mainBand)}</span>
+            <span class="top-count">${concertRating(concert)}/10</span>
+          </li>`).join("");
+        elements.topRatedEmpty.hidden = topRated.length > 0;
+
+        elements.topBandsCard.hidden = !state.statSettings.includes("topBands");
+        elements.topVenuesCard.hidden = !state.statSettings.includes("topVenues");
+        elements.topRatedCard.hidden = !state.statSettings.includes("topRated");
       }
 
       function render() {
@@ -1917,6 +2207,8 @@
         elements.supportBands.value = concert.supportBands.join(", ");
         elements.venue.value = concert.venue;
         elements.date.value = concert.date;
+        elements.planned.checked = concert.planned === true;
+        elements.rating.value = String(concertRating(concert));
         elements.formTitle.textContent = "Konzert bearbeiten";
         elements.submitButton.querySelector("span").textContent = "Änderungen speichern";
         elements.cancelEditButton.hidden = false;
@@ -1944,7 +2236,9 @@
           mainBand: normalize(elements.mainBand.value),
           supportBands: splitSupportBands(elements.supportBands.value),
           venue: normalize(elements.venue.value),
-          date: elements.date.value
+          date: elements.date.value,
+          planned: elements.planned.checked,
+          rating: Number(elements.rating.value) || 0
         };
 
         const editIndex = state.concerts.findIndex(item => item.id === concert.id);
@@ -1993,8 +2287,18 @@
 
       elements.settingsButton.addEventListener("click", () => {
         renderVenueSettings();
+        elements.statSettingInputs.forEach(input => {
+          input.checked = state.statSettings.includes(input.value);
+        });
         elements.newVenueInput.value = "";
         elements.settingsDialog.showModal();
+      });
+
+      elements.mobileStatsToggle.addEventListener("click", () => {
+        const expanded = !elements.sidebar.classList.contains("mobile-expanded");
+        elements.sidebar.classList.toggle("mobile-expanded", expanded);
+        elements.mobileStatsToggle.setAttribute("aria-expanded", String(expanded));
+        elements.mobileStatsToggle.querySelector("span").textContent = expanded ? "Weniger" : "Statistiken";
       });
 
       elements.closeSettingsButton.addEventListener("click", () => {
@@ -2065,11 +2369,15 @@
         }
 
         state.venues = uniqueSorted(nextVenues);
+        state.statSettings = [...elements.statSettingInputs]
+          .filter(input => input.checked)
+          .map(input => input.value);
         saveVenues();
+        savePreferences();
         renderVenueOptions();
         render();
         elements.settingsDialog.close();
-        showToast("Gespeicherte Orte aktualisiert.");
+        showToast("Einstellungen gespeichert.");
       });
 
       elements.exportButton.addEventListener("click", () => {
@@ -2083,7 +2391,11 @@
           version: 1,
           exportedAt: new Date().toISOString(),
           concerts: state.concerts,
-          venues: state.venues
+          venues: state.venues,
+          preferences: {
+            roleColors: state.roleColors,
+            statSettings: state.statSettings
+          }
         };
         const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -2116,14 +2428,27 @@
             mainBand: normalize(concert.mainBand),
             supportBands: concert.supportBands.map(normalize).filter(Boolean),
             venue: normalize(concert.venue),
-            date: concert.date
+            date: concert.date,
+            planned: concert.planned === true,
+            rating: Math.min(10, Math.max(0, Number(concert.rating) || 0))
           }));
           const backupVenues = !Array.isArray(data) && Array.isArray(data.venues)
             ? data.venues.filter(value => typeof value === "string")
             : [];
           state.venues = uniqueSorted([...backupVenues, ...state.concerts.map(concert => concert.venue)]);
+          if (!Array.isArray(data) && data.preferences) {
+            const allowedStats = new Set([...elements.statSettingInputs].map(input => input.value));
+            if (Array.isArray(data.preferences.statSettings)) {
+              state.statSettings = data.preferences.statSettings.filter(id => allowedStats.has(id));
+            }
+            if (typeof data.preferences.roleColors === "boolean") {
+              state.roleColors = data.preferences.roleColors;
+              elements.roleColorToggle.checked = state.roleColors;
+            }
+          }
           saveConcerts();
           saveVenues();
+          savePreferences();
           renderVenueOptions();
           resetForm();
           render();
@@ -2141,6 +2466,10 @@
           event.preventDefault();
           elements.importFile.click();
         }
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) render();
       });
 
       renderVenueOptions();
