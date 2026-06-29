@@ -487,10 +487,48 @@
     }
 
     .form-toggle {
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: center;
       justify-content: flex-start;
       width: 100%;
       min-height: 48px;
       color: var(--ink);
+    }
+
+    .form-toggle-text {
+      min-width: 0;
+      white-space: normal;
+    }
+
+    .rating-control {
+      min-height: 48px;
+      padding: 7px 12px 5px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .rating-range {
+      width: 100%;
+      height: 20px;
+      margin: 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .rating-scale {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.61rem;
+      font-weight: 750;
+    }
+
+    .rating-scale output {
+      color: var(--accent-dark);
+      font-size: 0.72rem;
+      font-weight: 900;
     }
 
     .settings-section {
@@ -509,6 +547,63 @@
       margin: 5px 0 15px;
       color: var(--muted);
       font-size: 0.8rem;
+    }
+
+    .sync-panel {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 780;
+    }
+
+    .sync-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #a6aaa7;
+      box-shadow: 0 0 0 4px rgba(166, 170, 167, 0.14);
+    }
+
+    .sync-status.online .sync-dot {
+      background: #2a8a70;
+      box-shadow: 0 0 0 4px rgba(42, 138, 112, 0.14);
+    }
+
+    .sync-status.working .sync-dot {
+      background: #c18a2d;
+      box-shadow: 0 0 0 4px rgba(193, 138, 45, 0.14);
+    }
+
+    .sync-status.error .sync-dot {
+      background: var(--danger);
+      box-shadow: 0 0 0 4px rgba(179, 58, 69, 0.13);
+    }
+
+    .sync-fields {
+      display: grid;
+      gap: 10px;
+    }
+
+    .sync-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sync-help {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.72rem;
     }
 
     .settings-options {
@@ -777,7 +872,31 @@
       text-transform: uppercase;
     }
 
-    .rating-display {
+    .rating-bar {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      width: 74px;
+      gap: 6px;
+    }
+
+    .rating-track {
+      position: relative;
+      overflow: hidden;
+      width: 54px;
+      height: 4px;
+      border-radius: 99px;
+      background: #e3e1db;
+    }
+
+    .rating-track > span {
+      position: absolute;
+      inset: 0 auto 0 0;
+      border-radius: inherit;
+      background: #b98023;
+    }
+
+    .rating-value {
       flex: 0 0 auto;
       color: #9a6c1b;
       font-size: 0.67rem;
@@ -1479,20 +1598,23 @@
           <h1 id="page-title">Jeder Abend.<br>Eine Erinnerung.</h1>
           <p>Halte fest, wen du live gesehen hast – vom Headliner bis zur ersten Vorband.</p>
           <div class="hero-actions">
-            <a class="button button-light" href="#concert-form-section">
+            <button class="button button-light" id="toggle-form-button" type="button" aria-expanded="false" aria-controls="concert-form-section">
               <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
               Konzert eintragen
-            </a>
+            </button>
             <a class="button button-ghost" href="#concert-list-section" style="color:#fff;border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.07)">Liste ansehen</a>
           </div>
         </section>
 
-        <section class="content-card" id="concert-form-section" aria-labelledby="form-title">
+        <section class="content-card" id="concert-form-section" aria-labelledby="form-title" hidden>
           <div class="section-heading">
             <div>
               <h2 id="form-title">Konzert hinzufügen</h2>
               <p>Die Vorbands kannst du mit Kommas trennen.</p>
             </div>
+            <button class="icon-button" id="close-form-button" type="button" aria-label="Formular schließen" title="Schließen">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+            </button>
           </div>
 
           <form id="concert-form">
@@ -1526,25 +1648,16 @@
                 <label class="toggle form-toggle" title="Bis zu diesem Datum ausgegraut anzeigen und nicht mitzählen">
                   <input id="planned-input" name="planned" type="checkbox">
                   <span class="switch" aria-hidden="true"></span>
-                  Konzert steht noch bevor
+                  <span class="form-toggle-text">Konzert steht noch bevor</span>
                 </label>
               </div>
 
               <div class="field">
                 <label for="rating-input">Bewertung</label>
-                <select class="select" id="rating-input" name="rating">
-                  <option value="0">Noch nicht bewertet</option>
-                  <option value="1">★ 1 von 10</option>
-                  <option value="2">★ 2 von 10</option>
-                  <option value="3">★ 3 von 10</option>
-                  <option value="4">★ 4 von 10</option>
-                  <option value="5">★ 5 von 10</option>
-                  <option value="6">★ 6 von 10</option>
-                  <option value="7">★ 7 von 10</option>
-                  <option value="8">★ 8 von 10</option>
-                  <option value="9">★ 9 von 10</option>
-                  <option value="10">★ 10 von 10</option>
-                </select>
+                <div class="rating-control">
+                  <input class="rating-range" id="rating-input" name="rating" type="range" min="1" max="10" value="5" step="1">
+                  <div class="rating-scale" aria-hidden="true"><span>1</span><output id="rating-output">5</output><span>10</span></div>
+                </div>
               </div>
             </div>
 
@@ -1675,6 +1788,35 @@
         <span class="settings-label">Gespeicherte Orte</span>
         <div class="venue-library" id="venue-library"></div>
 
+        <section class="settings-section" aria-labelledby="sync-settings-title">
+          <h3 id="sync-settings-title">Cloud-Synchronisierung</h3>
+          <p>Mit demselben E-Mail-Konto bleiben Handy und Desktop automatisch auf demselben Stand.</p>
+          <div class="sync-panel">
+            <div class="sync-status" id="sync-status"><span class="sync-dot" aria-hidden="true"></span><span id="sync-status-text">Nur lokal gespeichert</span></div>
+            <div class="sync-fields">
+              <div class="field">
+                <label for="sync-url-input">Supabase-Projekt-URL</label>
+                <input class="input" id="sync-url-input" type="url" placeholder="https://dein-projekt.supabase.co" autocomplete="url">
+              </div>
+              <div class="field">
+                <label for="sync-key-input">Publishable-/Anon-Key</label>
+                <input class="input" id="sync-key-input" type="password" placeholder="sb_publishable_…" autocomplete="off">
+              </div>
+              <button class="button button-ghost" id="save-sync-config-button" type="button">Verbindung speichern</button>
+              <div class="field">
+                <label for="sync-email-input">E-Mail für die Anmeldung</label>
+                <input class="input" id="sync-email-input" type="email" placeholder="name@beispiel.de" autocomplete="email">
+              </div>
+            </div>
+            <div class="sync-actions">
+              <button class="button" id="send-magic-link-button" type="button">Anmeldelink senden</button>
+              <button class="button button-ghost" id="sync-now-button" type="button" hidden>Jetzt synchronisieren</button>
+              <button class="button button-ghost button-danger" id="sync-sign-out-button" type="button" hidden>Abmelden</button>
+            </div>
+            <p class="sync-help" id="sync-help">Die Projekt-URL und der öffentliche Schlüssel werden nur auf diesem Gerät gespeichert. Die Konzertdaten sind durch deinen Login geschützt.</p>
+          </div>
+        </section>
+
         <section class="settings-section" aria-labelledby="stats-settings-title">
           <h3 id="stats-settings-title">Statistiken anzeigen</h3>
           <p>Wähle aus, welche Kennzahlen und Ranglisten in deiner Bilanz erscheinen.</p>
@@ -1687,6 +1829,19 @@
             <label class="setting-check"><input type="checkbox" name="stat-setting" value="averageRating"> Ø Bewertung</label>
             <label class="setting-check"><input type="checkbox" name="stat-setting" value="activeYears"> Aktive Konzertjahre</label>
             <label class="setting-check"><input type="checkbox" name="stat-setting" value="favoriteMonth"> Beliebtester Konzertmonat</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="mainActs"> Verschiedene Hauptacts</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="supportActs"> Verschiedene Vorbands</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="ratedConcerts"> Bewertete Konzerte</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="perfectRatings"> 10-von-10-Konzerte</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="averageLineup"> Ø Bands pro Abend</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="concertsPerYear"> Ø Konzerte pro Jahr</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="busiestYear"> Aktivstes Konzertjahr</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="favoriteWeekday"> Häufigster Wochentag</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="repeatRate"> Wiedersehquote der Bands</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="firstConcert"> Erstes Konzert</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="lastConcert"> Letztes Konzert</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="nextConcert"> Nächstes Konzert</label>
+            <label class="setting-check"><input type="checkbox" name="stat-setting" value="maxSupports"> Meiste Vorbands an einem Abend</label>
             <label class="setting-check"><input type="checkbox" name="stat-setting" value="topBands"> Meistgesehene Bands</label>
             <label class="setting-check"><input type="checkbox" name="stat-setting" value="topVenues"> Häufigste Konzertorte</label>
             <label class="setting-check"><input type="checkbox" name="stat-setting" value="topRated"> Bestbewertete Konzerte</label>
@@ -1701,6 +1856,8 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.2/dist/umd/supabase.min.js"></script>
+
   <script>
     (() => {
       "use strict";
@@ -1708,6 +1865,7 @@
       const STORAGE_KEY = "meine-konzertliste-v1";
       const PREFERENCES_KEY = "meine-konzertliste-einstellungen-v1";
       const VENUES_KEY = "meine-konzertliste-orte-v1";
+      const SYNC_CONFIG_KEY = "meine-konzertliste-sync-v1";
       const DEFAULT_STATS = ["bands", "appearances", "places", "year", "upcoming", "averageRating", "topBands", "topVenues"];
 
       const initialConcerts = loadConcerts();
@@ -1722,9 +1880,20 @@
         statSettings: Array.isArray(savedPreferences.statSettings) ? savedPreferences.statSettings : DEFAULT_STATS
       };
 
+      const syncRuntime = {
+        client: null,
+        user: null,
+        channel: null,
+        timer: null,
+        applyingRemote: false,
+        initializedConfig: ""
+      };
+
       const elements = {
         form: document.querySelector("#concert-form"),
         formSection: document.querySelector("#concert-form-section"),
+        toggleFormButton: document.querySelector("#toggle-form-button"),
+        closeFormButton: document.querySelector("#close-form-button"),
         formTitle: document.querySelector("#form-title"),
         editId: document.querySelector("#edit-id"),
         mainBand: document.querySelector("#main-band-input"),
@@ -1733,6 +1902,7 @@
         date: document.querySelector("#date-input"),
         planned: document.querySelector("#planned-input"),
         rating: document.querySelector("#rating-input"),
+        ratingOutput: document.querySelector("#rating-output"),
         submitButton: document.querySelector("#submit-button"),
         cancelEditButton: document.querySelector("#cancel-edit-button"),
         list: document.querySelector("#concert-list"),
@@ -1751,6 +1921,16 @@
         venueLibrary: document.querySelector("#venue-library"),
         newVenueInput: document.querySelector("#new-venue-input"),
         addVenueButton: document.querySelector("#add-venue-button"),
+        syncUrl: document.querySelector("#sync-url-input"),
+        syncKey: document.querySelector("#sync-key-input"),
+        syncEmail: document.querySelector("#sync-email-input"),
+        saveSyncConfigButton: document.querySelector("#save-sync-config-button"),
+        sendMagicLinkButton: document.querySelector("#send-magic-link-button"),
+        syncNowButton: document.querySelector("#sync-now-button"),
+        syncSignOutButton: document.querySelector("#sync-sign-out-button"),
+        syncStatus: document.querySelector("#sync-status"),
+        syncStatusText: document.querySelector("#sync-status-text"),
+        syncHelp: document.querySelector("#sync-help"),
         statSettingInputs: document.querySelectorAll('[name="stat-setting"]'),
         exportButton: document.querySelector("#export-button"),
         importFile: document.querySelector("#import-file"),
@@ -1791,6 +1971,18 @@
         }
       }
 
+      function loadSyncConfig() {
+        try {
+          return JSON.parse(localStorage.getItem(SYNC_CONFIG_KEY) || "{}");
+        } catch {
+          return {};
+        }
+      }
+
+      function saveSyncConfig(config) {
+        localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify(config));
+      }
+
       function loadVenues(concerts) {
         try {
           const saved = localStorage.getItem(VENUES_KEY);
@@ -1816,6 +2008,7 @@
 
       function saveConcerts() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state.concerts));
+        queueCloudSync();
       }
 
       function savePreferences() {
@@ -1823,10 +2016,12 @@
           roleColors: state.roleColors,
           statSettings: state.statSettings
         }));
+        queueCloudSync();
       }
 
       function saveVenues() {
         localStorage.setItem(VENUES_KEY, JSON.stringify(state.venues));
+        queueCloudSync();
       }
 
       function normalize(value) {
@@ -2046,7 +2241,7 @@
                 <h3 title="${escapeHtml(concert.mainBand)}">${escapeHtml(concert.mainBand)}</h3>
                 <span class="role-label">Hauptact</span>
                 ${upcoming ? `<span class="upcoming-badge">Bevorstehend</span>` : ""}
-                ${rating ? `<span class="rating-display" title="${rating} von 10 Sternen">★ ${rating}/10</span>` : ""}
+                ${rating ? `<span class="rating-bar" title="Bewertung: ${rating} von 10" aria-label="Bewertung: ${rating} von 10"><span class="rating-track" aria-hidden="true"><span style="width:${rating * 10}%"></span></span><span class="rating-value">${rating}</span></span>` : ""}
               </div>
               <div class="supports-block">
                 <span class="supports-label">Vorbands</span>
@@ -2136,9 +2331,20 @@
         const ratings = concerts.map(concertRating).filter(Boolean);
         const activeYears = new Set(concerts.map(concert => concert.date.slice(0, 4)));
         const monthCounts = countValues(concerts.map(concert => String(parseDate(concert.date).getMonth())));
+        const yearCounts = countValues(concerts.map(concert => concert.date.slice(0, 4)));
+        const weekdayCounts = countValues(concerts.map(concert => String(parseDate(concert.date).getDay())));
+        const bandCounts = countValues(bands);
+        const repeatedBands = bandCounts.filter(item => item.count > 1).length;
+        const sortedCompleted = [...concerts].sort((a, b) => a.date.localeCompare(b.date));
+        const sortedUpcoming = state.concerts.filter(isUpcoming).sort((a, b) => a.date.localeCompare(b.date));
         const favoriteMonth = monthCounts.length
           ? new Intl.DateTimeFormat("de-DE", { month: "short" }).format(new Date(2020, Number(monthCounts[0].name), 1)).replace(".", "")
           : "–";
+        const favoriteWeekday = weekdayCounts.length
+          ? new Intl.DateTimeFormat("de-DE", { weekday: "short" }).format(new Date(2020, 5, 7 + Number(weekdayCounts[0].name))).replace(".", "")
+          : "–";
+        const mainActs = new Set(concerts.map(concert => keyFor(concert.mainBand)));
+        const supportActs = new Set(concerts.flatMap(concert => concert.supportBands).map(keyFor));
 
         const metrics = {
           bands: { value: uniqueBands.size, label: "verschiedene Bands" },
@@ -2151,7 +2357,32 @@
             label: "Ø Bewertung"
           },
           activeYears: { value: activeYears.size, label: "aktive Konzertjahre" },
-          favoriteMonth: { value: favoriteMonth, label: "häufigster Konzertmonat" }
+          favoriteMonth: { value: favoriteMonth, label: "häufigster Konzertmonat" },
+          mainActs: { value: mainActs.size, label: "verschiedene Hauptacts" },
+          supportActs: { value: supportActs.size, label: "verschiedene Vorbands" },
+          ratedConcerts: { value: ratings.length, label: "bewertete Konzerte" },
+          perfectRatings: { value: ratings.filter(rating => rating === 10).length, label: "10-von-10-Konzerte" },
+          averageLineup: {
+            value: concerts.length ? (bands.length / concerts.length).toLocaleString("de-DE", { maximumFractionDigits: 1 }) : "–",
+            label: "Ø Bands pro Abend"
+          },
+          concertsPerYear: {
+            value: activeYears.size ? (concerts.length / activeYears.size).toLocaleString("de-DE", { maximumFractionDigits: 1 }) : "–",
+            label: "Ø Konzerte pro Jahr"
+          },
+          busiestYear: { value: yearCounts[0]?.name || "–", label: "aktivstes Konzertjahr" },
+          favoriteWeekday: { value: favoriteWeekday, label: "häufigster Wochentag" },
+          repeatRate: {
+            value: bandCounts.length ? `${Math.round((repeatedBands / bandCounts.length) * 100)} %` : "–",
+            label: "Wiedersehquote der Bands"
+          },
+          firstConcert: { value: sortedCompleted[0] ? formatCompactDate(sortedCompleted[0].date) : "–", label: "erstes Konzert" },
+          lastConcert: { value: sortedCompleted.at(-1) ? formatCompactDate(sortedCompleted.at(-1).date) : "–", label: "letztes Konzert" },
+          nextConcert: { value: sortedUpcoming[0] ? formatCompactDate(sortedUpcoming[0].date) : "–", label: "nächstes Konzert" },
+          maxSupports: {
+            value: concerts.length ? Math.max(...concerts.map(concert => concert.supportBands.length)) : 0,
+            label: "meiste Vorbands an einem Abend"
+          }
         };
 
         elements.statConcerts.textContent = concerts.length;
@@ -2193,9 +2424,232 @@
         toastTimer = setTimeout(() => elements.toast.classList.remove("visible"), 2800);
       }
 
+      function setSyncStatus(type, message) {
+        elements.syncStatus.classList.remove("online", "working", "error");
+        if (type) elements.syncStatus.classList.add(type);
+        elements.syncStatusText.textContent = message;
+      }
+
+      function archivePayload() {
+        return {
+          version: 2,
+          concerts: state.concerts,
+          venues: state.venues,
+          preferences: {
+            roleColors: state.roleColors,
+            statSettings: state.statSettings
+          }
+        };
+      }
+
+      function applyCloudPayload(payload) {
+        if (!payload || !Array.isArray(payload.concerts) || !payload.concerts.every(isValidConcert)) {
+          throw new Error("Die Cloud-Daten haben ein ungültiges Format.");
+        }
+
+        syncRuntime.applyingRemote = true;
+        try {
+          state.concerts = payload.concerts.map(concert => ({
+            id: concert.id,
+            mainBand: normalize(concert.mainBand),
+            supportBands: concert.supportBands.map(normalize).filter(Boolean),
+            venue: normalize(concert.venue),
+            date: concert.date,
+            planned: concert.planned === true,
+            rating: Math.min(10, Math.max(0, Number(concert.rating) || 0))
+          }));
+          state.venues = uniqueSorted([
+            ...(Array.isArray(payload.venues) ? payload.venues.filter(value => typeof value === "string") : []),
+            ...state.concerts.map(concert => concert.venue)
+          ]);
+
+          if (payload.preferences) {
+            const allowedStats = new Set([...elements.statSettingInputs].map(input => input.value));
+            if (Array.isArray(payload.preferences.statSettings)) {
+              state.statSettings = payload.preferences.statSettings.filter(id => allowedStats.has(id));
+            }
+            if (typeof payload.preferences.roleColors === "boolean") {
+              state.roleColors = payload.preferences.roleColors;
+            }
+          }
+
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state.concerts));
+          localStorage.setItem(VENUES_KEY, JSON.stringify(state.venues));
+          localStorage.setItem(PREFERENCES_KEY, JSON.stringify({
+            roleColors: state.roleColors,
+            statSettings: state.statSettings
+          }));
+          elements.roleColorToggle.checked = state.roleColors;
+          renderVenueOptions();
+          render();
+        } finally {
+          syncRuntime.applyingRemote = false;
+        }
+      }
+
+      function queueCloudSync() {
+        if (syncRuntime.applyingRemote || !syncRuntime.client || !syncRuntime.user) return;
+        clearTimeout(syncRuntime.timer);
+        syncRuntime.timer = setTimeout(() => pushCloudData(), 700);
+      }
+
+      async function pushCloudData() {
+        if (!syncRuntime.client || !syncRuntime.user) return;
+        clearTimeout(syncRuntime.timer);
+        setSyncStatus("working", "Änderungen werden synchronisiert …");
+        const { error } = await syncRuntime.client
+          .from("concert_archives")
+          .upsert({
+            user_id: syncRuntime.user.id,
+            payload: archivePayload(),
+            updated_at: new Date().toISOString()
+          }, { onConflict: "user_id" });
+
+        if (error) {
+          console.warn("Cloud-Synchronisierung fehlgeschlagen", error);
+          setSyncStatus("error", "Synchronisierung fehlgeschlagen");
+          elements.syncHelp.textContent = "Prüfe, ob du die SQL-Einrichtung in Supabase ausgeführt hast.";
+          return;
+        }
+        setSyncStatus("online", `Synchronisiert als ${syncRuntime.user.email || "Benutzer"}`);
+      }
+
+      async function pullCloudData() {
+        if (!syncRuntime.client || !syncRuntime.user) return;
+        setSyncStatus("working", "Cloud-Daten werden geladen …");
+        const { data, error } = await syncRuntime.client
+          .from("concert_archives")
+          .select("payload, updated_at")
+          .eq("user_id", syncRuntime.user.id)
+          .maybeSingle();
+
+        if (error) {
+          console.warn("Cloud-Daten konnten nicht geladen werden", error);
+          setSyncStatus("error", "Cloud-Verbindung unvollständig");
+          elements.syncHelp.textContent = "Führe zuerst die mitgelieferte supabase-setup.sql im Supabase SQL Editor aus.";
+          return;
+        }
+
+        if (data?.payload) {
+          try {
+            applyCloudPayload(data.payload);
+            setSyncStatus("online", `Synchronisiert als ${syncRuntime.user.email || "Benutzer"}`);
+          } catch (payloadError) {
+            console.warn(payloadError);
+            setSyncStatus("error", "Cloud-Daten konnten nicht gelesen werden");
+          }
+        } else {
+          await pushCloudData();
+        }
+      }
+
+      async function subscribeToCloud() {
+        if (!syncRuntime.client || !syncRuntime.user) return;
+        if (syncRuntime.channel) await syncRuntime.client.removeChannel(syncRuntime.channel);
+        syncRuntime.channel = syncRuntime.client
+          .channel(`concert-archive-${syncRuntime.user.id}`)
+          .on("postgres_changes", {
+            event: "*",
+            schema: "public",
+            table: "concert_archives",
+            filter: `user_id=eq.${syncRuntime.user.id}`
+          }, payload => {
+            if (payload.new?.payload) {
+              try {
+                applyCloudPayload(payload.new.payload);
+                setSyncStatus("online", `Synchronisiert als ${syncRuntime.user.email || "Benutzer"}`);
+              } catch (error) {
+                console.warn("Live-Aktualisierung konnte nicht übernommen werden", error);
+              }
+            }
+          })
+          .subscribe();
+      }
+
+      async function handleSignedIn(session) {
+        syncRuntime.user = session.user;
+        elements.syncEmail.value = session.user.email || elements.syncEmail.value;
+        elements.sendMagicLinkButton.hidden = true;
+        elements.syncNowButton.hidden = false;
+        elements.syncSignOutButton.hidden = false;
+        await pullCloudData();
+        await subscribeToCloud();
+      }
+
+      async function initializeSync(force = false) {
+        const config = loadSyncConfig();
+        elements.syncUrl.value = config.url || "";
+        elements.syncKey.value = config.key || "";
+        elements.syncEmail.value = config.email || elements.syncEmail.value || "";
+
+        if (!config.url || !config.key) {
+          setSyncStatus("", "Nur lokal gespeichert");
+          return;
+        }
+        if (!window.supabase?.createClient) {
+          setSyncStatus("error", "Supabase-Bibliothek nicht geladen");
+          return;
+        }
+
+        const signature = `${config.url}|${config.key}`;
+        if (!force && syncRuntime.initializedConfig === signature && syncRuntime.client) return;
+
+        if (syncRuntime.authSubscription) syncRuntime.authSubscription.unsubscribe();
+        if (syncRuntime.channel && syncRuntime.client) await syncRuntime.client.removeChannel(syncRuntime.channel);
+
+        syncRuntime.initializedConfig = signature;
+        syncRuntime.client = window.supabase.createClient(config.url, config.key, {
+          auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+        });
+
+        const { data: authListener } = syncRuntime.client.auth.onAuthStateChange((event, session) => {
+          window.setTimeout(() => {
+            if (session?.user) {
+              handleSignedIn(session);
+            } else if (event === "SIGNED_OUT") {
+              syncRuntime.user = null;
+              elements.sendMagicLinkButton.hidden = false;
+              elements.syncNowButton.hidden = true;
+              elements.syncSignOutButton.hidden = true;
+              setSyncStatus("", "Verbunden, aber nicht angemeldet");
+            }
+          }, 0);
+        });
+        syncRuntime.authSubscription = authListener.subscription;
+
+        const { data, error } = await syncRuntime.client.auth.getSession();
+        if (error) {
+          setSyncStatus("error", "Anmeldestatus konnte nicht geladen werden");
+          return;
+        }
+        if (data.session?.user) {
+          await handleSignedIn(data.session);
+        } else {
+          elements.sendMagicLinkButton.hidden = false;
+          elements.syncNowButton.hidden = true;
+          elements.syncSignOutButton.hidden = true;
+          setSyncStatus("", "Bereit für die Anmeldung");
+        }
+      }
+
+      function openConcertForm() {
+        elements.formSection.hidden = false;
+        elements.toggleFormButton.setAttribute("aria-expanded", "true");
+        elements.formSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function closeConcertForm() {
+        resetForm();
+        elements.formSection.hidden = true;
+        elements.toggleFormButton.setAttribute("aria-expanded", "false");
+      }
+
       function resetForm() {
         elements.form.reset();
         elements.editId.value = "";
+        elements.rating.value = "5";
+        elements.ratingOutput.value = "5";
+        elements.ratingOutput.textContent = "5";
         elements.formTitle.textContent = "Konzert hinzufügen";
         elements.submitButton.querySelector("span").textContent = "Konzert speichern";
         elements.cancelEditButton.hidden = true;
@@ -2208,11 +2662,13 @@
         elements.venue.value = concert.venue;
         elements.date.value = concert.date;
         elements.planned.checked = concert.planned === true;
-        elements.rating.value = String(concertRating(concert));
+        elements.rating.value = String(concertRating(concert) || 5);
+        elements.ratingOutput.value = elements.rating.value;
+        elements.ratingOutput.textContent = elements.rating.value;
         elements.formTitle.textContent = "Konzert bearbeiten";
         elements.submitButton.querySelector("span").textContent = "Änderungen speichern";
         elements.cancelEditButton.hidden = false;
-        elements.formSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        openConcertForm();
         window.setTimeout(() => elements.mainBand.focus({ preventScroll: true }), 450);
       }
 
@@ -2222,7 +2678,7 @@
 
         state.concerts = state.concerts.filter(item => item.id !== concert.id);
         saveConcerts();
-        if (elements.editId.value === concert.id) resetForm();
+        if (elements.editId.value === concert.id) closeConcertForm();
         render();
         showToast("Konzert gelöscht.");
       }
@@ -2252,11 +2708,27 @@
 
         rememberVenue(concert.venue);
         saveConcerts();
-        resetForm();
+        closeConcertForm();
         render();
       });
 
-      elements.cancelEditButton.addEventListener("click", resetForm);
+      elements.cancelEditButton.addEventListener("click", closeConcertForm);
+
+      elements.toggleFormButton.addEventListener("click", () => {
+        if (elements.formSection.hidden) {
+          openConcertForm();
+          window.setTimeout(() => elements.mainBand.focus({ preventScroll: true }), 350);
+        } else {
+          closeConcertForm();
+        }
+      });
+
+      elements.closeFormButton.addEventListener("click", closeConcertForm);
+
+      elements.rating.addEventListener("input", () => {
+        elements.ratingOutput.value = elements.rating.value;
+        elements.ratingOutput.textContent = elements.rating.value;
+      });
 
       elements.list.addEventListener("click", event => {
         const actionButton = event.target.closest("[data-action]");
@@ -2292,6 +2764,77 @@
         });
         elements.newVenueInput.value = "";
         elements.settingsDialog.showModal();
+      });
+
+      elements.saveSyncConfigButton.addEventListener("click", async () => {
+        const url = elements.syncUrl.value.trim().replace(/\/$/, "");
+        const key = elements.syncKey.value.trim();
+        const email = elements.syncEmail.value.trim();
+        if (!/^https:\/\//i.test(url) || !key) {
+          setSyncStatus("error", "Projekt-URL oder Schlüssel fehlt");
+          return;
+        }
+        saveSyncConfig({ url, key, email });
+        setSyncStatus("working", "Verbindung wird eingerichtet …");
+        await initializeSync(true);
+        showToast("Cloud-Verbindung gespeichert.");
+      });
+
+      elements.sendMagicLinkButton.addEventListener("click", async () => {
+        const email = elements.syncEmail.value.trim();
+        if (!syncRuntime.client) {
+          await initializeSync();
+        }
+        if (!syncRuntime.client) {
+          setSyncStatus("error", "Speichere zuerst die Cloud-Verbindung");
+          return;
+        }
+        if (!email || !email.includes("@")) {
+          setSyncStatus("error", "Bitte eine gültige E-Mail eingeben");
+          return;
+        }
+        if (window.location.protocol === "file:") {
+          setSyncStatus("error", "Anmeldung über die veröffentlichte GitHub-Seite öffnen");
+          elements.syncHelp.textContent = "Magic Links benötigen deine veröffentlichte https://-Adresse, nicht die lokale Datei.";
+          return;
+        }
+
+        const config = loadSyncConfig();
+        saveSyncConfig({ ...config, email });
+        setSyncStatus("working", "Anmeldelink wird gesendet …");
+        const redirectTo = `${window.location.origin}${window.location.pathname}`;
+        const { error } = await syncRuntime.client.auth.signInWithOtp({
+          email,
+          options: { emailRedirectTo: redirectTo, shouldCreateUser: true }
+        });
+        if (error) {
+          console.warn("Anmeldelink konnte nicht gesendet werden", error);
+          setSyncStatus("error", "Anmeldelink konnte nicht gesendet werden");
+          return;
+        }
+        setSyncStatus("working", "Anmeldelink wurde per E-Mail gesendet");
+        elements.syncHelp.textContent = "Öffne die E-Mail auf diesem Gerät und klicke den Link. Danach startet die Synchronisierung automatisch.";
+      });
+
+      elements.syncNowButton.addEventListener("click", async () => {
+        await pushCloudData();
+        showToast("Cloud-Daten wurden aktualisiert.");
+      });
+
+      elements.syncSignOutButton.addEventListener("click", async () => {
+        if (!syncRuntime.client) return;
+        const { error } = await syncRuntime.client.auth.signOut({ scope: "local" });
+        if (error) {
+          setSyncStatus("error", "Abmelden fehlgeschlagen");
+          return;
+        }
+        syncRuntime.user = null;
+        if (syncRuntime.channel) await syncRuntime.client.removeChannel(syncRuntime.channel);
+        syncRuntime.channel = null;
+        elements.sendMagicLinkButton.hidden = false;
+        elements.syncNowButton.hidden = true;
+        elements.syncSignOutButton.hidden = true;
+        setSyncStatus("", "Abgemeldet – lokale Daten bleiben erhalten");
       });
 
       elements.mobileStatsToggle.addEventListener("click", () => {
@@ -2388,7 +2931,7 @@
 
         const backup = {
           app: "Meine Konzertliste",
-          version: 1,
+          version: 2,
           exportedAt: new Date().toISOString(),
           concerts: state.concerts,
           venues: state.venues,
@@ -2469,11 +3012,15 @@
       });
 
       document.addEventListener("visibilitychange", () => {
-        if (!document.hidden) render();
+        if (!document.hidden) {
+          render();
+          if (syncRuntime.user) pullCloudData();
+        }
       });
 
       renderVenueOptions();
       render();
+      initializeSync();
     })();
   </script>
 </body>
