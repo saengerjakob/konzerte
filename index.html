@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#f7f6f2">
   <meta name="description" content="Meine persönliche Konzertliste – Konzerte, Bands, Orte und Erinnerungen an einem Platz.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Konzertliste">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <title>Meine Konzertliste</title>
 
   <style>
@@ -564,6 +570,26 @@
       border: 1px solid var(--line);
       border-radius: 12px;
       background: #fff;
+      transition: opacity 160ms ease, background 160ms ease;
+    }
+
+    .field label.rating-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .rating-option input {
+      width: 17px;
+      height: 17px;
+      margin: 0;
+      accent-color: var(--accent);
+    }
+
+    .rating-control.disabled {
+      opacity: 0.42;
+      background: var(--surface-soft);
     }
 
     .rating-range {
@@ -697,6 +723,37 @@
       margin-bottom: 20px;
     }
 
+    .quick-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: -8px 0 18px;
+    }
+
+    .filter-chip {
+      min-height: 34px;
+      padding: 6px 11px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      color: var(--muted);
+      background: #fff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+    }
+
+    .filter-chip:hover {
+      border-color: #bfc5c1;
+      color: var(--ink);
+    }
+
+    .filter-chip.active {
+      border-color: var(--accent);
+      color: #fff;
+      background: var(--accent);
+    }
+
     .input-wrap {
       position: relative;
     }
@@ -818,6 +875,31 @@
 
     .concert-card:last-child {
       border-bottom: 0;
+    }
+
+    .year-group + .year-group {
+      border-top: 1px solid var(--line);
+    }
+
+    .year-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 14px;
+      color: var(--accent-dark);
+      background: #edf5f2;
+    }
+
+    .year-heading strong {
+      font-size: 0.78rem;
+      letter-spacing: 0.035em;
+    }
+
+    .year-heading span {
+      color: var(--muted);
+      font-size: 0.62rem;
+      font-weight: 750;
     }
 
     .concert-card:hover {
@@ -1487,6 +1569,22 @@
         grid-template-columns: 1fr;
       }
 
+      .quick-filters {
+        flex-wrap: nowrap;
+        margin-inline: -2px;
+        padding: 2px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .quick-filters::-webkit-scrollbar {
+        display: none;
+      }
+
+      .filter-chip {
+        flex: 0 0 auto;
+      }
+
       .field-wide,
       .toolbar .input-wrap {
         grid-column: auto;
@@ -1579,19 +1677,25 @@
           </svg>
           <span>Einstellungen</span>
         </button>
-        <button class="button button-ghost" id="export-button" type="button" title="Liste als JSON sichern">
+        <button class="button button-ghost" id="install-app-button" type="button" title="Als App installieren" hidden>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2"></rect><path d="M12 6v8M9 11l3 3 3-3"></path><path d="M10 18h4"></path>
+          </svg>
+          <span>App installieren</span>
+        </button>
+        <button class="button button-ghost" id="export-button" type="button" title="Liste als Excel-Datei exportieren">
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path>
           </svg>
-          <span>Export</span>
+          <span>Excel-Export</span>
         </button>
-        <label class="button button-ghost" for="import-file" tabindex="0" title="JSON-Sicherung importieren">
+        <label class="button button-ghost" for="import-file" tabindex="0" title="Excel-Datei importieren">
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 21V9"></path><path d="m17 14-5-5-5 5"></path><path d="M5 3h14"></path>
           </svg>
-          <span>Import</span>
+          <span>Excel-Import</span>
         </label>
-        <input class="sr-only" id="import-file" type="file" accept="application/json,.json">
+        <input class="sr-only" id="import-file" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,.xlsx,.xls">
       </div>
     </header>
 
@@ -1628,12 +1732,13 @@
             <div class="form-grid">
               <div class="field">
                 <label for="main-band-input">Hauptact <span class="required" aria-hidden="true">*</span></label>
-                <input class="input" id="main-band-input" name="mainBand" type="text" maxlength="100" placeholder="z. B. The National" autocomplete="off" required>
+                <input class="input" id="main-band-input" name="mainBand" type="text" maxlength="100" placeholder="z. B. The National" autocomplete="off" list="band-options" required>
               </div>
 
               <div class="field">
                 <label for="support-input">Vorband(s)</label>
-                <input class="input" id="support-input" name="supportBands" type="text" maxlength="300" placeholder="z. B. Soccer Mommy, Bartees Strange" autocomplete="off">
+                <input class="input" id="support-input" name="supportBands" type="text" maxlength="300" placeholder="z. B. Soccer Mommy, Bartees Strange" autocomplete="off" list="band-options">
+                <datalist id="band-options"></datalist>
                 <p class="field-hint">Mehrere Bands mit Komma trennen</p>
               </div>
 
@@ -1659,8 +1764,11 @@
               </div>
 
               <div class="field">
-                <label for="rating-input">Bewertung</label>
-                <div class="rating-control">
+                <label class="rating-option" for="rating-enabled-input">
+                  <input id="rating-enabled-input" type="checkbox">
+                  Bewertung vergeben
+                </label>
+                <div class="rating-control disabled" id="rating-control">
                   <input class="rating-range" id="rating-input" name="rating" type="range" min="1" max="10" value="5" step="1">
                   <div class="rating-scale" aria-hidden="true"><span>1</span><output id="rating-output">5</output><span>10</span></div>
                 </div>
@@ -1714,6 +1822,14 @@
               </select>
             </div>
 
+          </div>
+
+          <div class="quick-filters" id="quick-filters" role="group" aria-label="Konzertliste filtern">
+            <button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">Alle</button>
+            <button class="filter-chip" type="button" data-filter="upcoming" aria-pressed="false">Bevorstehend</button>
+            <button class="filter-chip" type="button" data-filter="rated" aria-pressed="false">Bewertet</button>
+            <button class="filter-chip" type="button" data-filter="year" aria-pressed="false">Dieses Jahr</button>
+            <button class="filter-chip" type="button" data-filter="unrated" aria-pressed="false">Ohne Bewertung</button>
           </div>
 
           <div class="concert-list-header" id="concert-list-header" aria-hidden="true" hidden>
@@ -1863,6 +1979,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="xlsx.full.min.js"></script>
   <script>
     (() => {
       "use strict";
@@ -1870,6 +1987,7 @@
       const STORAGE_KEY = "meine-konzertliste-v1";
       const PREFERENCES_KEY = "meine-konzertliste-einstellungen-v1";
       const VENUES_KEY = "meine-konzertliste-orte-v1";
+      const BANDS_KEY = "meine-konzertliste-bands-v1";
       const GITHUB_SYNC_CONFIG_KEY = "meine-konzertliste-github-sync-v1";
       const DEFAULT_STATS = ["bands", "appearances", "places", "year", "upcoming", "averageRating", "topBands", "topVenues"];
 
@@ -1879,8 +1997,10 @@
       const state = {
         concerts: initialConcerts,
         venues: loadVenues(initialConcerts),
+        bands: loadBands(initialConcerts),
         search: "",
         sort: "date-desc",
+        filter: "all",
         statSettings: Array.isArray(savedPreferences.statSettings) ? savedPreferences.statSettings : DEFAULT_STATS
       };
 
@@ -1905,6 +2025,8 @@
         venue: document.querySelector("#venue-input"),
         date: document.querySelector("#date-input"),
         planned: document.querySelector("#planned-input"),
+        ratingEnabled: document.querySelector("#rating-enabled-input"),
+        ratingControl: document.querySelector("#rating-control"),
         rating: document.querySelector("#rating-input"),
         ratingOutput: document.querySelector("#rating-output"),
         submitButton: document.querySelector("#submit-button"),
@@ -1915,8 +2037,11 @@
         visibleCount: document.querySelector("#visible-count"),
         search: document.querySelector("#search-input"),
         sort: document.querySelector("#sort-select"),
+        filterButtons: document.querySelectorAll("[data-filter]"),
+        bandOptions: document.querySelector("#band-options"),
         venueOptions: document.querySelector("#venue-options"),
         settingsButton: document.querySelector("#settings-button"),
+        installAppButton: document.querySelector("#install-app-button"),
         settingsDialog: document.querySelector("#settings-dialog"),
         settingsForm: document.querySelector("#settings-form"),
         closeSettingsButton: document.querySelector("#close-settings-button"),
@@ -1955,6 +2080,7 @@
       };
 
       elements.sort.value = state.sort;
+      updateRatingControl();
 
       function loadConcerts() {
         try {
@@ -2000,6 +2126,17 @@
         }
       }
 
+      function loadBands(concerts) {
+        const concertBands = concerts.flatMap(concert => [concert.mainBand, ...concert.supportBands]);
+        try {
+          const saved = JSON.parse(localStorage.getItem(BANDS_KEY) || "[]");
+          return uniqueBands([...(Array.isArray(saved) ? saved : []), ...concertBands]);
+        } catch (error) {
+          console.warn("Die gespeicherten Bandnamen konnten nicht gelesen werden.", error);
+          return uniqueBands(concertBands);
+        }
+      }
+
       function isValidConcert(concert) {
         return concert &&
           typeof concert.id === "string" &&
@@ -2026,6 +2163,11 @@
         queueGitHubSync();
       }
 
+      function saveBands() {
+        localStorage.setItem(BANDS_KEY, JSON.stringify(state.bands));
+        queueGitHubSync();
+      }
+
       function normalize(value) {
         return value.trim().replace(/\s+/g, " ");
       }
@@ -2033,9 +2175,9 @@
       function splitSupportBands(value) {
         return value
           .split(/[,;\n]+/)
-          .map(normalize)
+          .map(canonicalBand)
           .filter(Boolean)
-          .filter((band, index, bands) => bands.findIndex(item => item.localeCompare(band, "de", { sensitivity: "base" }) === 0) === index);
+          .filter((band, index, bands) => bands.findIndex(item => bandKey(item) === bandKey(band)) === index);
       }
 
       function makeId() {
@@ -2111,6 +2253,31 @@
         return normalize(value).toLocaleLowerCase("de-DE");
       }
 
+      function bandKey(value) {
+        return normalize(value)
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLocaleLowerCase("de-DE")
+          .replace(/ß/g, "ss")
+          .replace(/[^a-z0-9]+/g, "");
+      }
+
+      function uniqueBands(values) {
+        const unique = new Map();
+        values.map(normalize).filter(Boolean).forEach(value => {
+          const key = bandKey(value);
+          if (key && !unique.has(key)) unique.set(key, value);
+        });
+        return [...unique.values()].sort((a, b) => a.localeCompare(b, "de", { sensitivity: "base" }));
+      }
+
+      function canonicalBand(value) {
+        const cleanValue = normalize(value);
+        if (!cleanValue) return "";
+        const key = bandKey(cleanValue);
+        return state.bands.find(band => bandKey(band) === key) || cleanValue;
+      }
+
       function uniqueSorted(values) {
         const unique = new Map();
         values.map(normalize).filter(Boolean).forEach(value => {
@@ -2124,6 +2291,18 @@
         state.venues = uniqueSorted([...state.venues, venue]);
         saveVenues();
         renderVenueOptions();
+      }
+
+      function rememberBands(bands) {
+        state.bands = uniqueBands([...state.bands, ...bands]);
+        saveBands();
+        renderBandOptions();
+      }
+
+      function renderBandOptions() {
+        elements.bandOptions.innerHTML = state.bands
+          .map(band => `<option value="${escapeHtml(band)}"></option>`)
+          .join("");
       }
 
       function renderVenueOptions() {
@@ -2180,9 +2359,23 @@
         const query = keyFor(state.search);
         const frequency = getBandFrequencyMap();
         const filtered = state.concerts.filter(concert => {
-          if (!query) return true;
-          return [concert.mainBand, ...concert.supportBands, concert.venue]
+          const matchesSearch = !query || [concert.mainBand, ...concert.supportBands, concert.venue]
             .some(value => keyFor(value).includes(query));
+          if (!matchesSearch) return false;
+
+          switch (state.filter) {
+            case "upcoming":
+              return isUpcoming(concert);
+            case "rated":
+              return concertRating(concert) > 0;
+            case "year":
+              return concert.date.startsWith(String(new Date().getFullYear()));
+            case "unrated":
+              return concertRating(concert) === 0;
+            case "all":
+            default:
+              return true;
+          }
         });
 
         return [...filtered].sort((a, b) => {
@@ -2267,6 +2460,27 @@
           </article>`;
       }
 
+      function renderYearGroups(concerts) {
+        const groups = new Map();
+        concerts.forEach(concert => {
+          const year = concert.date.slice(0, 4);
+          if (!groups.has(year)) groups.set(year, []);
+          groups.get(year).push(concert);
+        });
+
+        const years = [...groups.keys()].sort((a, b) =>
+          state.sort === "date-asc" ? a.localeCompare(b) : b.localeCompare(a));
+
+        return years.map(year => {
+          const yearConcerts = groups.get(year);
+          return `
+            <section class="year-group" aria-label="Konzerte ${escapeHtml(year)}">
+              <div class="year-heading"><strong>${escapeHtml(year)}</strong><span>${yearConcerts.length} ${yearConcerts.length === 1 ? "Konzert" : "Konzerte"}</span></div>
+              ${yearConcerts.map(renderConcertCard).join("")}
+            </section>`;
+        }).join("");
+      }
+
       function renderList() {
         const concerts = getVisibleConcerts();
         const hasRows = concerts.length > 0;
@@ -2299,12 +2513,12 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
               </span>
               <h3>Nichts gefunden.</h3>
-              <p>Versuch es mit einem anderen Bandnamen oder Konzertort.</p>
+              <p>Ändere den Suchbegriff oder wähle einen anderen Schnellfilter.</p>
             </div>`;
           return;
         }
 
-        elements.list.innerHTML = concerts.map(renderConcertCard).join("");
+        elements.list.innerHTML = renderYearGroups(concerts);
       }
 
       function renderTopList(target, emptyTarget, values, unitSingular, unitPlural) {
@@ -2431,6 +2645,7 @@
           version: 2,
           concerts: state.concerts,
           venues: state.venues,
+          bands: state.bands,
           preferences: {
             statSettings: state.statSettings
           }
@@ -2444,10 +2659,14 @@
 
         githubRuntime.applyingRemote = true;
         try {
+          state.bands = uniqueBands([
+            ...(Array.isArray(payload.bands) ? payload.bands.filter(value => typeof value === "string") : []),
+            ...payload.concerts.flatMap(concert => [concert.mainBand, ...concert.supportBands])
+          ]);
           state.concerts = payload.concerts.map(concert => ({
             id: concert.id,
-            mainBand: normalize(concert.mainBand),
-            supportBands: concert.supportBands.map(normalize).filter(Boolean),
+            mainBand: canonicalBand(concert.mainBand),
+            supportBands: concert.supportBands.map(canonicalBand).filter(Boolean),
             venue: normalize(concert.venue),
             date: concert.date,
             planned: concert.planned === true,
@@ -2467,9 +2686,11 @@
 
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state.concerts));
           localStorage.setItem(VENUES_KEY, JSON.stringify(state.venues));
+          localStorage.setItem(BANDS_KEY, JSON.stringify(state.bands));
           localStorage.setItem(PREFERENCES_KEY, JSON.stringify({
             statSettings: state.statSettings
           }));
+          renderBandOptions();
           renderVenueOptions();
           render();
         } finally {
@@ -2636,15 +2857,23 @@
         }
       }
 
+      function updateRatingControl() {
+        const enabled = elements.ratingEnabled.checked;
+        elements.rating.disabled = !enabled;
+        elements.ratingControl.classList.toggle("disabled", !enabled);
+      }
+
       function resetForm() {
         elements.form.reset();
         elements.editId.value = "";
+        elements.ratingEnabled.checked = false;
         elements.rating.value = "5";
         elements.ratingOutput.value = "5";
         elements.ratingOutput.textContent = "5";
         elements.formTitle.textContent = "Konzert hinzufügen";
         elements.submitButton.querySelector("span").textContent = "Konzert speichern";
         elements.cancelEditButton.hidden = true;
+        updateRatingControl();
       }
 
       function startEditing(concert) {
@@ -2654,12 +2883,14 @@
         elements.venue.value = concert.venue;
         elements.date.value = concert.date;
         elements.planned.checked = concert.planned === true;
+        elements.ratingEnabled.checked = concertRating(concert) > 0;
         elements.rating.value = String(concertRating(concert) || 5);
         elements.ratingOutput.value = elements.rating.value;
         elements.ratingOutput.textContent = elements.rating.value;
         elements.formTitle.textContent = "Konzert bearbeiten";
         elements.submitButton.querySelector("span").textContent = "Änderungen speichern";
         elements.cancelEditButton.hidden = false;
+        updateRatingControl();
         openConcertForm();
         window.setTimeout(() => elements.mainBand.focus({ preventScroll: true }), 450);
       }
@@ -2679,14 +2910,16 @@
         event.preventDefault();
         if (!elements.form.reportValidity()) return;
 
+        const mainBand = canonicalBand(elements.mainBand.value);
+        const supportBands = splitSupportBands(elements.supportBands.value);
         const concert = {
           id: elements.editId.value || makeId(),
-          mainBand: normalize(elements.mainBand.value),
-          supportBands: splitSupportBands(elements.supportBands.value),
+          mainBand,
+          supportBands,
           venue: normalize(elements.venue.value),
           date: elements.date.value,
           planned: elements.planned.checked,
-          rating: Number(elements.rating.value) || 0
+          rating: elements.ratingEnabled.checked ? Number(elements.rating.value) || 0 : 0
         };
 
         const editIndex = state.concerts.findIndex(item => item.id === concert.id);
@@ -2699,6 +2932,7 @@
         }
 
         rememberVenue(concert.venue);
+        rememberBands([mainBand, ...supportBands]);
         saveConcerts();
         closeConcertForm();
         render();
@@ -2724,6 +2958,8 @@
         elements.ratingOutput.textContent = elements.rating.value;
       });
 
+      elements.ratingEnabled.addEventListener("change", updateRatingControl);
+
       elements.list.addEventListener("click", event => {
         const actionButton = event.target.closest("[data-action]");
         if (!actionButton) return;
@@ -2743,6 +2979,18 @@
       elements.sort.addEventListener("change", event => {
         state.sort = event.target.value;
         renderList();
+      });
+
+      elements.filterButtons.forEach(button => {
+        button.addEventListener("click", () => {
+          state.filter = button.dataset.filter;
+          elements.filterButtons.forEach(item => {
+            const active = item === button;
+            item.classList.toggle("active", active);
+            item.setAttribute("aria-pressed", String(active));
+          });
+          renderList();
+        });
       });
 
       elements.settingsButton.addEventListener("click", () => {
@@ -2888,32 +3136,100 @@
         showToast("Einstellungen gespeichert.");
       });
 
+      function excelHeaderKey(value) {
+        const key = String(value || "")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLocaleLowerCase("de-DE")
+          .replace(/[^a-z0-9]+/g, "");
+        const aliases = {
+          hauptact: "mainBand", band: "mainBand", kunstler: "mainBand", artist: "mainBand",
+          vorband: "supportBands", vorbands: "supportBands", support: "supportBands", supportacts: "supportBands",
+          ort: "venue", venue: "venue", veranstaltungsort: "venue", location: "venue",
+          datum: "date", date: "date",
+          status: "status",
+          bewertung: "rating", rating: "rating", sterne: "rating"
+        };
+        return aliases[key] || "";
+      }
+
+      function excelDateToIso(value) {
+        if (value instanceof Date && !Number.isNaN(value.getTime())) {
+          return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-${String(value.getDate()).padStart(2, "0")}`;
+        }
+        if (typeof value === "number" && window.XLSX?.SSF) {
+          const parts = window.XLSX.SSF.parse_date_code(value);
+          if (parts) return `${parts.y}-${String(parts.m).padStart(2, "0")}-${String(parts.d).padStart(2, "0")}`;
+        }
+        const text = String(value || "").trim();
+        let match = text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+        if (match) return `${match[1]}-${match[2].padStart(2, "0")}-${match[3].padStart(2, "0")}`;
+        match = text.match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})$/);
+        if (match) return `${match[3]}-${match[2].padStart(2, "0")}-${match[1].padStart(2, "0")}`;
+        return "";
+      }
+
+      function parseExcelConcerts(sheet) {
+        const matrix = window.XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "", raw: true });
+        const nonEmptyRows = matrix.filter(row => row.some(value => String(value).trim() !== ""));
+        if (nonEmptyRows.length === 0) throw new Error("Die Excel-Datei enthält keine Konzerte.");
+
+        const headerKeys = nonEmptyRows[0].map(excelHeaderKey);
+        const hasHeader = headerKeys.includes("mainBand") && headerKeys.includes("date");
+        const rows = hasHeader ? nonEmptyRows.slice(1) : nonEmptyRows;
+        const indexes = hasHeader
+          ? Object.fromEntries(headerKeys.map((key, index) => [key, index]).filter(([key]) => key))
+          : { mainBand: 0, venue: 1, date: 2, supportBands: 3, rating: 4, status: 5 };
+
+        return rows.map((row, rowIndex) => {
+          const mainBand = normalize(String(row[indexes.mainBand] || ""));
+          const venue = normalize(String(row[indexes.venue] || ""));
+          const date = excelDateToIso(row[indexes.date]);
+          if (!mainBand || !venue || !date) {
+            throw new Error(`Excel-Zeile ${rowIndex + (hasHeader ? 2 : 1)} benötigt Band, Ort und Datum.`);
+          }
+          const supportBands = splitSupportBands(String(row[indexes.supportBands] || "").replace(/\|/g, ","));
+          const ratingValue = String(row[indexes.rating] ?? "").replace(",", ".").match(/\d+(?:\.\d+)?/)?.[0];
+          const rating = ratingValue ? Math.min(10, Math.max(1, Math.round(Number(ratingValue)))) : 0;
+          const status = keyFor(String(row[indexes.status] || ""));
+          const planned = status.includes("bevor") || status.includes("geplant") || status.includes("upcoming") || (!status && date > todayString());
+          return { id: makeId(), mainBand, supportBands, venue, date, planned, rating };
+        });
+      }
+
       elements.exportButton.addEventListener("click", () => {
         if (state.concerts.length === 0) {
           showToast("Noch keine Konzerte zum Exportieren.");
           return;
         }
+        if (!window.XLSX) {
+          showToast("Die Excel-Funktion konnte nicht geladen werden.");
+          return;
+        }
 
-        const backup = {
-          app: "Meine Konzertliste",
-          version: 2,
-          exportedAt: new Date().toISOString(),
-          concerts: state.concerts,
-          venues: state.venues,
-          preferences: {
-            statSettings: state.statSettings
-          }
-        };
-        const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `konzertliste-${new Date().toISOString().slice(0, 10)}.json`;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        URL.revokeObjectURL(url);
-        showToast("Sicherung wurde erstellt.");
+        const rows = [
+          ["Hauptact", "Vorbands", "Ort", "Datum", "Status", "Bewertung"],
+          ...[...state.concerts]
+            .sort((a, b) => b.date.localeCompare(a.date))
+            .map(concert => [
+              concert.mainBand,
+              concert.supportBands.join(", "),
+              concert.venue,
+              parseDate(concert.date),
+              isUpcoming(concert) ? "Bevorstehend" : "Stattgefunden",
+              concertRating(concert) || ""
+            ])
+        ];
+        const sheet = window.XLSX.utils.aoa_to_sheet(rows, { cellDates: true });
+        sheet["!cols"] = [{ wch: 28 }, { wch: 36 }, { wch: 34 }, { wch: 13 }, { wch: 16 }, { wch: 12 }];
+        sheet["!autofilter"] = { ref: `A1:F${rows.length}` };
+        for (let row = 2; row <= rows.length; row += 1) {
+          if (sheet[`D${row}`]) sheet[`D${row}`].z = "dd.mm.yyyy";
+        }
+        const workbook = window.XLSX.utils.book_new();
+        window.XLSX.utils.book_append_sheet(workbook, sheet, "Konzerte");
+        window.XLSX.writeFile(workbook, `konzertliste-${new Date().toISOString().slice(0, 10)}.xlsx`, { compression: true, cellDates: true });
+        showToast("Excel-Datei wurde erstellt.");
       });
 
       elements.importFile.addEventListener("change", async event => {
@@ -2921,44 +3237,35 @@
         if (!file) return;
 
         try {
-          const data = JSON.parse(await file.text());
-          const imported = Array.isArray(data) ? data : data.concerts;
-          if (!Array.isArray(imported) || !imported.every(isValidConcert)) {
-            throw new Error("Ungültiges Dateiformat");
-          }
-
-          const confirmed = state.concerts.length === 0 || window.confirm("Die aktuelle Liste durch die importierte Sicherung ersetzen?");
+          if (!window.XLSX) throw new Error("Die Excel-Funktion konnte nicht geladen werden.");
+          const workbook = window.XLSX.read(await file.arrayBuffer(), { type: "array", cellDates: true });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          if (!sheet) throw new Error("Die Excel-Datei enthält kein Tabellenblatt.");
+          const imported = parseExcelConcerts(sheet);
+          const confirmed = state.concerts.length === 0 || window.confirm("Die aktuelle Liste durch die importierte Excel-Datei ersetzen?");
           if (!confirmed) return;
 
+          state.bands = uniqueBands([
+            ...state.bands,
+            ...imported.flatMap(concert => [concert.mainBand, ...concert.supportBands])
+          ]);
           state.concerts = imported.map(concert => ({
-            id: concert.id || makeId(),
-            mainBand: normalize(concert.mainBand),
-            supportBands: concert.supportBands.map(normalize).filter(Boolean),
-            venue: normalize(concert.venue),
-            date: concert.date,
-            planned: concert.planned === true,
-            rating: Math.min(10, Math.max(0, Number(concert.rating) || 0))
+            ...concert,
+            mainBand: canonicalBand(concert.mainBand),
+            supportBands: concert.supportBands.map(canonicalBand)
           }));
-          const backupVenues = !Array.isArray(data) && Array.isArray(data.venues)
-            ? data.venues.filter(value => typeof value === "string")
-            : [];
-          state.venues = uniqueSorted([...backupVenues, ...state.concerts.map(concert => concert.venue)]);
-          if (!Array.isArray(data) && data.preferences) {
-            const allowedStats = new Set([...elements.statSettingInputs].map(input => input.value));
-            if (Array.isArray(data.preferences.statSettings)) {
-              state.statSettings = data.preferences.statSettings.filter(id => allowedStats.has(id));
-            }
-          }
+          state.venues = uniqueSorted([...state.venues, ...state.concerts.map(concert => concert.venue)]);
           saveConcerts();
           saveVenues();
-          savePreferences();
+          saveBands();
           renderVenueOptions();
+          renderBandOptions();
           resetForm();
           render();
-          showToast(`${state.concerts.length} Konzerte importiert.`);
+          showToast(`${state.concerts.length} Konzerte aus Excel importiert.`);
         } catch (error) {
-          console.warn("Import fehlgeschlagen", error);
-          showToast("Diese Datei ist keine gültige Konzertlisten-Sicherung.");
+          console.warn("Excel-Import fehlgeschlagen", error);
+          showToast(error.message || "Diese Excel-Datei konnte nicht importiert werden.");
         } finally {
           event.target.value = "";
         }
@@ -2971,6 +3278,27 @@
         }
       });
 
+      let installPrompt = null;
+      window.addEventListener("beforeinstallprompt", event => {
+        event.preventDefault();
+        installPrompt = event;
+        elements.installAppButton.hidden = false;
+      });
+
+      elements.installAppButton.addEventListener("click", async () => {
+        if (!installPrompt) return;
+        installPrompt.prompt();
+        await installPrompt.userChoice;
+        installPrompt = null;
+        elements.installAppButton.hidden = true;
+      });
+
+      window.addEventListener("appinstalled", () => {
+        installPrompt = null;
+        elements.installAppButton.hidden = true;
+        showToast("Konzertliste wurde als App installiert.");
+      });
+
       document.addEventListener("visibilitychange", () => {
         if (!document.hidden) {
           render();
@@ -2979,8 +3307,14 @@
       });
 
       renderVenueOptions();
+      renderBandOptions();
       render();
       initializeGitHubSync();
+      if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+        navigator.serviceWorker.register("./sw.js").catch(error => {
+          console.warn("Offline-Modus konnte nicht aktiviert werden.", error);
+        });
+      }
       window.setInterval(() => {
         if (githubRuntime.config && !githubRuntime.timer && !githubRuntime.pushing && !githubRuntime.pulling && !document.hidden) {
           pullGitHubData();
