@@ -145,6 +145,57 @@
       backdrop-filter: blur(4px);
     }
 
+    .concert-dialog {
+      width: min(720px, calc(100% - 24px));
+      max-height: min(90vh, 820px);
+      margin: auto;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: 24px;
+      color: var(--ink);
+      background: var(--surface);
+      box-shadow: 0 30px 90px rgba(22, 31, 28, 0.3);
+    }
+
+    .concert-dialog::backdrop {
+      background: rgba(25, 32, 30, 0.52);
+      backdrop-filter: blur(4px);
+    }
+
+    .concert-dialog-card {
+      display: grid;
+      max-height: min(90vh, 820px);
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    .concert-dialog .section-heading {
+      margin: 0;
+      padding: 21px 24px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .concert-dialog-form {
+      display: grid;
+      min-height: 0;
+      overflow: hidden;
+      grid-template-rows: minmax(0, 1fr) auto;
+    }
+
+    .concert-form-body {
+      overflow-y: auto;
+      padding: 24px;
+      background: #fafaf8;
+    }
+
+    .concert-dialog .form-actions {
+      margin: 0;
+      padding: 16px 24px;
+      border-top: 1px solid var(--line);
+      background: #fff;
+    }
+
     .settings-form {
       display: grid;
       max-height: min(82vh, 760px);
@@ -486,14 +537,20 @@
       margin-top: 22px;
     }
 
-    .form-toggle {
+    .field label.form-toggle {
       display: flex;
       flex-flow: row nowrap;
       align-items: center;
       justify-content: flex-start;
       width: 100%;
       min-height: 48px;
+      margin-bottom: 0;
       color: var(--ink);
+    }
+
+    .field label.form-toggle:has(input:checked) {
+      border-color: rgba(36, 107, 91, 0.45);
+      background: var(--accent-soft);
     }
 
     .form-toggle-text {
@@ -634,7 +691,7 @@
 
     .toolbar {
       display: grid;
-      grid-template-columns: minmax(180px, 1fr) minmax(190px, 230px) auto;
+      grid-template-columns: minmax(180px, 1fr) minmax(190px, 230px);
       gap: 10px;
       align-items: center;
       margin-bottom: 20px;
@@ -782,82 +839,41 @@
       max-width: 100%;
       overflow: hidden;
       margin: 0;
-      font-size: 0.92rem;
+      font-size: 1rem;
       line-height: 1.2;
       letter-spacing: -0.015em;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .role-label {
-      flex: 0 0 auto;
-      padding: 2px 6px;
-      border-radius: 99px;
-      color: var(--muted);
-      background: var(--surface-soft);
-      font-size: 0.52rem;
-      font-weight: 850;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
     .supports-block {
       display: flex;
       align-items: center;
       min-width: 0;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    .supports-label {
-      flex: 0 0 auto;
-      color: var(--muted);
-      font-size: 0.55rem;
-      font-weight: 900;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      margin-top: 5px;
     }
 
     .supports {
       display: flex;
       flex-wrap: wrap;
       min-width: 0;
-      gap: 4px;
+      gap: 3px 6px;
     }
 
     .support-chip {
-      max-width: 100%;
-      overflow: hidden;
-      padding: 2px 6px;
-      border: 1px solid #dfe4e1;
-      border-radius: 6px;
-      color: #46504d;
-      background: #f1f4f2;
-      font-size: 0.67rem;
-      line-height: 1.25;
-      font-weight: 750;
-      text-overflow: ellipsis;
+      color: var(--muted);
+      font-size: 0.58rem;
+      line-height: 1.35;
+      font-weight: 850;
+      letter-spacing: 0.055em;
+      text-transform: uppercase;
       white-space: nowrap;
     }
 
-    .support-chip.empty {
-      color: var(--muted);
-      font-weight: 650;
-    }
-
-    .role-colors .main-band h3 {
-      color: var(--main);
-    }
-
-    .role-colors .main-band .role-label {
-      color: var(--main);
-      background: var(--main-soft);
-    }
-
-    .role-colors .support-chip {
-      color: var(--support);
-      background: var(--support-soft);
-      border-color: #c9e1ed;
+    .support-chip + .support-chip::before {
+      margin-right: 6px;
+      color: #adb2af;
+      content: "·";
     }
 
     .upcoming-badge {
@@ -920,9 +936,7 @@
     }
 
     .concert-card.upcoming .support-chip {
-      color: #7c827f;
-      border-color: #dedfda;
-      background: #e9e9e5;
+      color: #858b88;
     }
 
     .event-meta {
@@ -1164,32 +1178,6 @@
       margin: 0;
       color: var(--muted);
       font-size: 0.82rem;
-    }
-
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 16px;
-      color: var(--muted);
-      font-size: 0.7rem;
-    }
-
-    .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--main);
-    }
-
-    .legend-dot.support {
-      background: var(--support);
     }
 
     .toast {
@@ -1470,6 +1458,22 @@
         padding-inline: 18px;
       }
 
+      .concert-dialog {
+        width: calc(100% - 16px);
+        max-height: calc(100dvh - 16px);
+        border-radius: 18px;
+      }
+
+      .concert-dialog-card {
+        max-height: calc(100dvh - 16px);
+      }
+
+      .concert-dialog .section-heading,
+      .concert-form-body,
+      .concert-dialog .form-actions {
+        padding-inline: 18px;
+      }
+
       .settings-footer .button {
         width: 100%;
       }
@@ -1510,7 +1514,7 @@
       }
 
       .main-band h3 {
-        font-size: 0.9rem;
+        font-size: 0.96rem;
       }
 
       .supports-block {
@@ -1598,7 +1602,7 @@
           <h1 id="page-title">Jeder Abend.<br>Eine Erinnerung.</h1>
           <p>Halte fest, wen du live gesehen hast – vom Headliner bis zur ersten Vorband.</p>
           <div class="hero-actions">
-            <button class="button button-light" id="toggle-form-button" type="button" aria-expanded="false" aria-controls="concert-form-section">
+            <button class="button button-light" id="toggle-form-button" type="button" aria-haspopup="dialog" aria-controls="concert-form-section">
               <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
               Konzert eintragen
             </button>
@@ -1606,7 +1610,8 @@
           </div>
         </section>
 
-        <section class="content-card" id="concert-form-section" aria-labelledby="form-title" hidden>
+        <dialog class="concert-dialog" id="concert-form-section" aria-labelledby="form-title">
+          <div class="concert-dialog-card">
           <div class="section-heading">
             <div>
               <h2 id="form-title">Konzert hinzufügen</h2>
@@ -1617,7 +1622,8 @@
             </button>
           </div>
 
-          <form id="concert-form">
+          <form class="concert-dialog-form" id="concert-form">
+            <div class="concert-form-body">
             <input id="edit-id" type="hidden">
             <div class="form-grid">
               <div class="field">
@@ -1660,6 +1666,7 @@
                 </div>
               </div>
             </div>
+            </div>
 
             <div class="form-actions">
               <button class="button button-ghost" id="cancel-edit-button" type="button" hidden>Abbrechen</button>
@@ -1669,7 +1676,8 @@
               </button>
             </div>
           </form>
-        </section>
+          </div>
+        </dialog>
 
         <section class="content-card" id="concert-list-section" aria-labelledby="list-title">
           <div class="section-heading">
@@ -1706,11 +1714,6 @@
               </select>
             </div>
 
-            <label class="toggle" title="Hauptacts und Vorbands farblich unterscheiden">
-              <input id="role-color-toggle" type="checkbox">
-              <span class="switch" aria-hidden="true"></span>
-              Rollenfarben
-            </label>
           </div>
 
           <div class="concert-list-header" id="concert-list-header" aria-hidden="true" hidden>
@@ -1721,10 +1724,6 @@
           </div>
           <div class="concert-list empty-list" id="concert-list" aria-live="polite"></div>
 
-          <div class="legend" id="role-legend" hidden>
-            <span class="legend-item"><span class="legend-dot"></span>Hauptact</span>
-            <span class="legend-item"><span class="legend-dot support"></span>Vorband</span>
-          </div>
         </section>
       </main>
 
@@ -1882,7 +1881,6 @@
         venues: loadVenues(initialConcerts),
         search: "",
         sort: "date-desc",
-        roleColors: savedPreferences.roleColors ?? false,
         statSettings: Array.isArray(savedPreferences.statSettings) ? savedPreferences.statSettings : DEFAULT_STATS
       };
 
@@ -1917,8 +1915,6 @@
         visibleCount: document.querySelector("#visible-count"),
         search: document.querySelector("#search-input"),
         sort: document.querySelector("#sort-select"),
-        roleColorToggle: document.querySelector("#role-color-toggle"),
-        roleLegend: document.querySelector("#role-legend"),
         venueOptions: document.querySelector("#venue-options"),
         settingsButton: document.querySelector("#settings-button"),
         settingsDialog: document.querySelector("#settings-dialog"),
@@ -1958,7 +1954,6 @@
         topRatedEmpty: document.querySelector("#top-rated-empty")
       };
 
-      elements.roleColorToggle.checked = state.roleColors;
       elements.sort.value = state.sort;
 
       function loadConcerts() {
@@ -2021,7 +2016,6 @@
 
       function savePreferences() {
         localStorage.setItem(PREFERENCES_KEY, JSON.stringify({
-          roleColors: state.roleColors,
           statSettings: state.statSettings
         }));
         queueGitHubSync();
@@ -2238,23 +2232,19 @@
       function renderConcertCard(concert) {
         const upcoming = isUpcoming(concert);
         const rating = concertRating(concert);
-        const supports = concert.supportBands.length
-          ? concert.supportBands.map(band => `<span class="support-chip" title="Vorband">${escapeHtml(band)}</span>`).join("")
-          : `<span class="support-chip empty">Keine Vorband eingetragen</span>`;
+        const supports = concert.supportBands
+          .map(band => `<span class="support-chip">${escapeHtml(band)}</span>`)
+          .join("");
 
         return `
           <article class="concert-card${upcoming ? " upcoming" : ""}" data-id="${escapeHtml(concert.id)}">
             <div class="band-info">
               <div class="main-band">
                 <h3 title="${escapeHtml(concert.mainBand)}">${escapeHtml(concert.mainBand)}</h3>
-                <span class="role-label">Hauptact</span>
                 ${upcoming ? `<span class="upcoming-badge">Bevorstehend</span>` : ""}
                 ${rating ? `<span class="rating-bar" title="Bewertung: ${rating} von 10" aria-label="Bewertung: ${rating} von 10"><span class="rating-track" aria-hidden="true"><span style="width:${rating * 10}%"></span></span><span class="rating-value">${rating}</span></span>` : ""}
               </div>
-              <div class="supports-block">
-                <span class="supports-label">Vorbands</span>
-                <div class="supports">${supports}</div>
-              </div>
+              ${supports ? `<div class="supports-block"><div class="supports">${supports}</div></div>` : ""}
             </div>
             <div class="event-meta">
               <div class="meta-item venue-cell" title="${escapeHtml(concert.venue)}">
@@ -2280,10 +2270,8 @@
       function renderList() {
         const concerts = getVisibleConcerts();
         const hasRows = concerts.length > 0;
-        elements.list.classList.toggle("role-colors", state.roleColors);
         elements.list.classList.toggle("empty-list", !hasRows);
         elements.listHeader.hidden = !hasRows;
-        elements.roleLegend.hidden = !state.roleColors || !hasRows;
         elements.visibleCount.textContent = `${concerts.length} ${concerts.length === 1 ? "Eintrag" : "Einträge"}`;
 
         if (state.concerts.length === 0) {
@@ -2444,7 +2432,6 @@
           concerts: state.concerts,
           venues: state.venues,
           preferences: {
-            roleColors: state.roleColors,
             statSettings: state.statSettings
           }
         };
@@ -2476,18 +2463,13 @@
             if (Array.isArray(payload.preferences.statSettings)) {
               state.statSettings = payload.preferences.statSettings.filter(id => allowedStats.has(id));
             }
-            if (typeof payload.preferences.roleColors === "boolean") {
-              state.roleColors = payload.preferences.roleColors;
-            }
           }
 
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state.concerts));
           localStorage.setItem(VENUES_KEY, JSON.stringify(state.venues));
           localStorage.setItem(PREFERENCES_KEY, JSON.stringify({
-            roleColors: state.roleColors,
             statSettings: state.statSettings
           }));
-          elements.roleColorToggle.checked = state.roleColors;
           renderVenueOptions();
           render();
         } finally {
@@ -2643,15 +2625,15 @@
       }
 
       function openConcertForm() {
-        elements.formSection.hidden = false;
-        elements.toggleFormButton.setAttribute("aria-expanded", "true");
-        elements.formSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (!elements.formSection.open) elements.formSection.showModal();
       }
 
       function closeConcertForm() {
-        resetForm();
-        elements.formSection.hidden = true;
-        elements.toggleFormButton.setAttribute("aria-expanded", "false");
+        if (elements.formSection.open) {
+          elements.formSection.close();
+        } else {
+          resetForm();
+        }
       }
 
       function resetForm() {
@@ -2725,15 +2707,17 @@
       elements.cancelEditButton.addEventListener("click", closeConcertForm);
 
       elements.toggleFormButton.addEventListener("click", () => {
-        if (elements.formSection.hidden) {
-          openConcertForm();
-          window.setTimeout(() => elements.mainBand.focus({ preventScroll: true }), 350);
-        } else {
-          closeConcertForm();
-        }
+        openConcertForm();
+        window.setTimeout(() => elements.mainBand.focus({ preventScroll: true }), 150);
       });
 
       elements.closeFormButton.addEventListener("click", closeConcertForm);
+
+      elements.formSection.addEventListener("close", resetForm);
+
+      elements.formSection.addEventListener("click", event => {
+        if (event.target === elements.formSection) closeConcertForm();
+      });
 
       elements.rating.addEventListener("input", () => {
         elements.ratingOutput.value = elements.rating.value;
@@ -2758,12 +2742,6 @@
 
       elements.sort.addEventListener("change", event => {
         state.sort = event.target.value;
-        renderList();
-      });
-
-      elements.roleColorToggle.addEventListener("change", event => {
-        state.roleColors = event.target.checked;
-        savePreferences();
         renderList();
       });
 
@@ -2923,7 +2901,6 @@
           concerts: state.concerts,
           venues: state.venues,
           preferences: {
-            roleColors: state.roleColors,
             statSettings: state.statSettings
           }
         };
@@ -2970,10 +2947,6 @@
             const allowedStats = new Set([...elements.statSettingInputs].map(input => input.value));
             if (Array.isArray(data.preferences.statSettings)) {
               state.statSettings = data.preferences.statSettings.filter(id => allowedStats.has(id));
-            }
-            if (typeof data.preferences.roleColors === "boolean") {
-              state.roleColors = data.preferences.roleColors;
-              elements.roleColorToggle.checked = state.roleColors;
             }
           }
           saveConcerts();
