@@ -1,8 +1,10 @@
-# GitHub-Synchronisierung einrichten
+# Konto- und Cloud-Synchronisierung einrichten
+
+Die App nutzt jetzt E-Mail/Passwort-Login über Supabase. Nutzer müssen keinen GitHub-Token mehr eintragen: Sie erstellen ein Konto, melden sich auf einem anderen Gerät wieder an und sehen ihre eigene Konzertliste.
 
 ## Website-Dateien veröffentlichen
 
-Für Excel-Import, Installation und Offline-Nutzung müssen jetzt **alle Dateien aus dem Ordner `outputs`** in deinem GitHub-Pages-Repository liegen. Dazu gehören insbesondere:
+Für Excel-Import, Installation und Offline-Nutzung müssen alle Dateien aus diesem Ordner im selben Ordner wie die `index.html` liegen:
 
 - `index.html`
 - `xlsx.full.min.js`
@@ -10,57 +12,75 @@ Für Excel-Import, Installation und Offline-Nutzung müssen jetzt **alle Dateien
 - `sw.js`
 - `icon-192.png`, `icon-512.png`, `icon-192.svg` und `icon-512.svg`
 
-Die Dateien müssen im selben Ordner wie die `index.html` liegen. Nach dem Hochladen GitHub Pages kurz neu laden. Die App kann anschließend über den eingeblendeten Button **App installieren** oder über das Browsermenü zum Startbildschirm hinzugefügt werden. Der Offline-Modus steht nach dem ersten vollständigen Online-Aufruf bereit.
+Nach dem Hochladen die veröffentlichte Seite einmal neu laden. Die App kann anschließend über **App installieren** oder über das Browsermenü zum Startbildschirm hinzugefügt werden.
 
-Der sichtbare Import und Export verwendet Excel-Dateien (`.xlsx`). Die GitHub-Synchronisierung nutzt intern weiterhin `concert-data.json`; diese Datei bitte nicht manuell bearbeiten.
+## 1. Supabase-Projekt anlegen
 
-Die Konzertseite speichert ihre gemeinsamen Daten in einer separaten Datei namens `concert-data.json`. Für die sicherste und übersichtlichste Trennung empfiehlt sich dafür ein eigenes **privates** GitHub-Repository.
+1. Auf [supabase.com](https://supabase.com) ein neues Projekt erstellen.
+2. Unter **Project Settings → API** diese Werte kopieren:
+   - **Project URL**
+   - **anon public key**
+3. In `index.html` oben im Script diese beiden Konstanten füllen:
 
-## 1. Privates Daten-Repository erstellen
+```js
+const SUPABASE_URL = "https://dein-projekt.supabase.co";
+const SUPABASE_ANON_KEY = "dein-anon-public-key";
+```
 
-1. Auf GitHub oben rechts **New repository** wählen.
-2. Zum Beispiel den Namen `meine-konzertdaten` vergeben.
-3. **Private** auswählen.
-4. **Add a README file** aktivieren, damit der Branch `main` sofort existiert.
-5. Repository erstellen.
+Der `anon public key` darf in einer statischen Website stehen. Die Trennung der Nutzer passiert durch Row-Level-Security in der Datenbank.
 
-## 2. Eingeschränkten Token erzeugen
+## 2. Datenbank-Tabelle anlegen
 
-1. GitHub öffnen: **Settings → Developer settings → Personal access tokens → Fine-grained tokens**.
-2. **Generate new token** wählen.
-3. Eine sinnvolle Laufzeit festlegen.
-4. Unter **Repository access** nur das eben erstellte Daten-Repository auswählen.
-5. Unter **Repository permissions** ausschließlich **Contents: Read and write** erlauben. `Metadata: Read` wird automatisch ergänzt.
-6. Token erzeugen und sofort sicher kopieren. GitHub zeigt ihn später nicht erneut vollständig an.
+In Supabase **SQL Editor → New query** öffnen und ausführen:
 
-Der Token darf niemals in `index.html`, einem Git-Commit oder einem Screenshot landen. Die Website speichert ihn ausschließlich im lokalen Browserspeicher des jeweiligen Geräts.
+```sql
+create table if not exists public.concert_archives (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  payload jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
 
-## 3. Erstes Gerät verbinden
+alter table public.concert_archives enable row level security;
 
-Zuerst das Gerät verwenden, auf dem deine vollständige aktuelle Konzertliste liegt.
+create policy "Users can read their own concert archive"
+on public.concert_archives
+for select
+to authenticated
+using ((select auth.uid()) = user_id);
 
-1. Die veröffentlichte Konzertseite öffnen.
-2. **Einstellungen → GitHub-Synchronisierung** öffnen.
-3. GitHub-Benutzernamen eintragen.
-4. Als Repository beispielsweise `meine-konzertdaten` eintragen.
-5. Branch `main` und Datei `concert-data.json` unverändert lassen.
-6. Den Fine-grained Token einfügen.
-7. **Verbinden und synchronisieren** wählen.
+create policy "Users can insert their own concert archive"
+on public.concert_archives
+for insert
+to authenticated
+with check ((select auth.uid()) = user_id);
 
-Existiert die Datendatei noch nicht, wird sie automatisch mit der aktuellen lokalen Liste erstellt.
+create policy "Users can update their own concert archive"
+on public.concert_archives
+for update
+to authenticated
+using ((select auth.uid()) = user_id)
+with check ((select auth.uid()) = user_id);
+```
 
-## 4. Weitere Geräte verbinden
+## 3. Login für Nutzer aktivieren
 
-Auf Handy und weiteren Computern dieselben Angaben und denselben Token eintragen. Beim Verbinden wird die bestehende `concert-data.json` geladen. Danach gilt:
+Unter **Authentication → Providers → Email** muss E-Mail aktiviert sein.
 
-- Änderungen werden nach dem Speichern automatisch zu GitHub übertragen.
-- Beim Öffnen der Seite, beim Zurückkehren in den Tab und ungefähr einmal pro Minute wird der aktuelle Stand geladen.
-- Die lokale Speicherung bleibt als Offline-Kopie erhalten.
-- Über **Aktuelle Liste hochladen** und **Cloud-Daten laden** kann der Abgleich jederzeit manuell ausgelöst werden.
+Für die einfachste private Nutzung kannst du **Confirm email** deaktivieren. Dann ist ein neues Konto sofort nutzbar. Wenn du E-Mail-Bestätigung aktiviert lässt, zeigt die App nach der Registrierung an, dass die E-Mail zuerst bestätigt werden muss.
 
-## Sicherheit und Konflikte
+## 4. Nutzung in der App
 
-- Verwende ein separates privates Repository und einen Token, der ausschließlich darauf zugreifen darf.
-- Bei einem verlorenen oder versehentlich veröffentlichten Token diesen sofort in GitHub widerrufen und einen neuen erzeugen.
-- Bearbeitest du dieselbe Liste exakt gleichzeitig auf zwei Geräten, kann GitHub einen Konflikt melden. Dann zuerst **Cloud-Daten laden**, die Änderung erneut vornehmen und speichern.
-- Vor der ersten Einrichtung empfiehlt sich zusätzlich ein JSON-Export der Konzertliste.
+1. Website öffnen.
+2. Oben **Anmelden** wählen.
+3. **Konto erstellen** oder mit bestehendem Konto anmelden.
+4. Danach wird jede Änderung automatisch gespeichert.
+5. Auf einem weiteren Gerät einfach mit derselben E-Mail und demselben Passwort anmelden.
+
+Wenn bereits lokale Konzerte vorhanden sind und die Cloud-Liste noch leer ist, legt die App beim ersten Login automatisch die erste Cloud-Kopie an.
+
+## Sicherheit und Verhalten
+
+- Jede Person sieht nur den eigenen Datensatz, weil `user_id = auth.uid()` erzwungen wird.
+- Ohne Anmeldung speichert die App weiter nur lokal auf dem Gerät.
+- Die lokale Offline-Kopie bleibt pro angemeldetem Nutzer getrennt gespeichert.
+- Über **Cloud-Liste laden** und **Dieses Gerät hochladen** kann der Abgleich manuell ausgelöst werden.

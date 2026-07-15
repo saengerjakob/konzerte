@@ -133,6 +133,14 @@
       gap: 8px;
     }
 
+    .account-email {
+      display: inline-block;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .settings-dialog {
       width: min(620px, calc(100% - 24px));
       max-height: min(82vh, 760px);
@@ -149,6 +157,10 @@
     .settings-dialog::backdrop {
       background: rgba(25, 32, 30, 0.48);
       backdrop-filter: blur(4px);
+    }
+
+    .auth-dialog {
+      width: min(520px, calc(100% - 24px));
     }
 
     .concert-dialog {
@@ -687,6 +699,235 @@
       margin: 0;
       color: var(--muted);
       font-size: 0.72rem;
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .auth-tabs .filter-chip {
+      width: 100%;
+      min-height: 42px;
+      border-radius: 11px;
+    }
+
+    .auth-copy {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .auth-fields {
+      display: grid;
+      gap: 12px;
+    }
+
+    .auth-account-card {
+      display: grid;
+      gap: 12px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .auth-account-card strong,
+    .auth-account-card span {
+      display: block;
+    }
+
+    .auth-account-card strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .auth-account-card span {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .auth-config-note {
+      margin: 0;
+      padding: 12px 13px;
+      border: 1px solid rgba(179, 58, 69, 0.22);
+      border-radius: 12px;
+      color: var(--danger);
+      background: #fff4f5;
+      font-size: 0.8rem;
+      font-weight: 730;
+    }
+
+    .recap-dialog {
+      width: min(780px, calc(100% - 24px));
+      max-height: min(90vh, 840px);
+      margin: auto;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: 26px;
+      color: #fff;
+      background: #111816;
+      box-shadow: 0 30px 90px rgba(22, 31, 28, 0.34);
+    }
+
+    .recap-dialog::backdrop {
+      background: rgba(25, 32, 30, 0.58);
+      backdrop-filter: blur(5px);
+    }
+
+    .recap-card {
+      display: grid;
+      max-height: min(90vh, 840px);
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      background:
+        linear-gradient(135deg, rgba(36, 107, 91, 0.92), rgba(30, 37, 35, 0.96) 48%, rgba(140, 60, 115, 0.88));
+    }
+
+    .recap-header,
+    .recap-footer,
+    .recap-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 22px;
+    }
+
+    .recap-header h2 {
+      margin: 2px 0 0;
+      font-size: clamp(1.25rem, 3vw, 1.8rem);
+      letter-spacing: -0.04em;
+    }
+
+    .recap-kicker {
+      display: block;
+      color: #c2f0e2;
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .recap-header .icon-button {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .recap-header .icon-button:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .recap-toolbar {
+      padding-block: 0 10px;
+      justify-content: flex-start;
+    }
+
+    .recap-toolbar label {
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 0.76rem;
+      font-weight: 850;
+    }
+
+    .recap-toolbar .select {
+      width: auto;
+      min-width: 120px;
+      min-height: 40px;
+      color: var(--ink);
+    }
+
+    .recap-stage {
+      min-height: 390px;
+      overflow-y: auto;
+      padding: 10px 22px 22px;
+    }
+
+    .recap-slide {
+      display: grid;
+      min-height: 360px;
+      align-content: center;
+      gap: 18px;
+      padding: clamp(24px, 5vw, 46px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    .recap-slide h3 {
+      max-width: 620px;
+      margin: 0;
+      font-size: clamp(1.9rem, 6vw, 4.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+    }
+
+    .recap-slide p {
+      max-width: 560px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: clamp(0.95rem, 2vw, 1.08rem);
+    }
+
+    .recap-stat {
+      font-size: clamp(4rem, 14vw, 8.4rem);
+      line-height: 0.82;
+      font-weight: 950;
+      letter-spacing: -0.08em;
+    }
+
+    .recap-facts {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .recap-fact {
+      min-width: 0;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.11);
+    }
+
+    .recap-fact strong,
+    .recap-fact span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .recap-fact strong {
+      font-size: 1.05rem;
+    }
+
+    .recap-fact span {
+      margin-top: 3px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.7rem;
+      font-weight: 760;
+    }
+
+    .recap-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .recap-dot {
+      width: 8px;
+      height: 8px;
+      border: 0;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.34);
+      cursor: pointer;
+    }
+
+    .recap-dot.active {
+      width: 22px;
+      background: #fff;
     }
 
     .settings-options {
@@ -1351,6 +1592,20 @@
         padding: 8px;
       }
 
+      .recap-dialog {
+        width: calc(100% - 16px);
+        max-height: calc(100dvh - 16px);
+        border-radius: 20px;
+      }
+
+      .recap-card {
+        max-height: calc(100dvh - 16px);
+      }
+
+      .recap-facts {
+        grid-template-columns: 1fr;
+      }
+
       .hero {
         min-height: auto;
         border-radius: 23px;
@@ -1636,6 +1891,31 @@
       .settings-options {
         grid-template-columns: 1fr;
       }
+
+      .auth-tabs {
+        grid-template-columns: 1fr;
+      }
+
+      .recap-header,
+      .recap-footer,
+      .recap-toolbar,
+      .recap-stage {
+        padding-inline: 16px;
+      }
+
+      .recap-footer {
+        flex-wrap: wrap;
+      }
+
+      .recap-footer .button {
+        flex: 1 1 132px;
+      }
+
+      .recap-dots {
+        order: -1;
+        width: 100%;
+        justify-content: center;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1670,7 +1950,19 @@
         </span>
       </div>
 
-      <div class="header-actions" aria-label="Datenverwaltung">
+      <div class="header-actions" aria-label="Konto und Datenverwaltung">
+        <button class="button button-ghost" id="account-button" type="button" title="Konto öffnen">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21a8 8 0 0 0-16 0"></path><circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span id="account-button-label">Anmelden</span>
+        </button>
+        <button class="button button-ghost" id="recap-button" type="button" title="Jahres-Recap anzeigen">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19V5"></path><path d="M8 19V9"></path><path d="M12 19V3"></path><path d="M16 19v-7"></path><path d="M20 19V8"></path>
+          </svg>
+          <span>Recap</span>
+        </button>
         <button class="button button-ghost" id="settings-button" type="button" title="Einstellungen öffnen">
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.09A1.7 1.7 0 0 0 8.94 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.51-1H3v-4h.09A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0-.34-1.88L4.2 7l2.83-2.83.06.06A1.7 1.7 0 0 0 8.97 4.6 1.7 1.7 0 0 0 10 3.09V3h4v.09a1.7 1.7 0 0 0 1.06 1.51 1.7 1.7 0 0 0 1.88-.34L17 4.2 19.83 7l-.06.06a1.7 1.7 0 0 0-.34 1.88A1.7 1.7 0 0 0 20.91 10H21v4h-.09A1.7 1.7 0 0 0 19.4 15Z"></path>
@@ -1904,39 +2196,17 @@
         <div class="venue-library" id="venue-library"></div>
 
         <section class="settings-section" aria-labelledby="sync-settings-title">
-          <h3 id="sync-settings-title">GitHub-Synchronisierung</h3>
-          <p>Speichert dein Archiv als separate JSON-Datei in einem privaten GitHub-Repository.</p>
+          <h3 id="sync-settings-title">Konto &amp; Cloud-Sync</h3>
+          <p>Mit E-Mail und Passwort anmelden, danach ist deine Liste auf allen Geräten verfügbar.</p>
           <div class="sync-panel">
             <div class="sync-status" id="sync-status"><span class="sync-dot" aria-hidden="true"></span><span id="sync-status-text">Nur lokal gespeichert</span></div>
-            <div class="sync-fields">
-              <div class="field">
-                <label for="github-owner-input">GitHub-Benutzername</label>
-                <input class="input" id="github-owner-input" type="text" placeholder="z. B. jakob123" autocomplete="username">
-              </div>
-              <div class="field">
-                <label for="github-repo-input">Daten-Repository</label>
-                <input class="input" id="github-repo-input" type="text" placeholder="z. B. meine-konzertdaten" autocomplete="off">
-              </div>
-              <div class="field">
-                <label for="github-branch-input">Branch</label>
-                <input class="input" id="github-branch-input" type="text" value="main" autocomplete="off">
-              </div>
-              <div class="field">
-                <label for="github-path-input">Datendatei</label>
-                <input class="input" id="github-path-input" type="text" value="concert-data.json" autocomplete="off">
-              </div>
-              <div class="field">
-                <label for="github-token-input">Fine-grained GitHub Token</label>
-                <input class="input" id="github-token-input" type="password" placeholder="github_pat_…" autocomplete="off">
-              </div>
-              <button class="button" id="save-github-config-button" type="button">Verbinden und synchronisieren</button>
-            </div>
             <div class="sync-actions">
-              <button class="button button-ghost" id="github-push-button" type="button" hidden>Aktuelle Liste hochladen</button>
-              <button class="button button-ghost" id="github-pull-button" type="button" hidden>Cloud-Daten laden</button>
-              <button class="button button-ghost button-danger" id="remove-github-config-button" type="button" hidden>Verbindung entfernen</button>
+              <button class="button" id="open-auth-button" type="button">Anmelden oder Konto erstellen</button>
+              <button class="button button-ghost" id="cloud-push-button" type="button" hidden>Dieses Gerät hochladen</button>
+              <button class="button button-ghost" id="cloud-pull-button" type="button" hidden>Cloud-Liste laden</button>
+              <button class="button button-ghost button-danger" id="settings-logout-button" type="button" hidden>Abmelden</button>
             </div>
-            <p class="sync-help" id="sync-help">Der Token wird nur lokal auf diesem Gerät gespeichert und niemals exportiert oder in die Datendatei geschrieben.</p>
+            <p class="sync-help" id="sync-help">Ohne Anmeldung bleibt die Liste nur auf diesem Gerät gespeichert.</p>
           </div>
         </section>
 
@@ -1977,6 +2247,75 @@
     </form>
   </dialog>
 
+  <dialog class="settings-dialog auth-dialog" id="auth-dialog" aria-labelledby="auth-title">
+    <form class="settings-form" id="auth-form">
+      <header class="settings-header">
+        <h2 id="auth-title">Konto</h2>
+        <button class="icon-button settings-close" id="close-auth-button" type="button" aria-label="Konto schließen" title="Schließen">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+        </button>
+      </header>
+      <div class="settings-body">
+        <div class="auth-account-card" id="auth-account-card" hidden>
+          <div>
+            <strong id="auth-account-email">Angemeldet</strong>
+            <span>Deine Liste wird automatisch in der Cloud gespeichert.</span>
+          </div>
+          <div class="sync-actions">
+            <button class="button button-ghost" id="auth-pull-button" type="button">Cloud-Liste laden</button>
+            <button class="button button-ghost button-danger" id="auth-logout-button" type="button">Abmelden</button>
+          </div>
+        </div>
+
+        <div id="auth-entry-panel">
+          <div class="auth-tabs" role="group" aria-label="Kontoaktion wählen">
+            <button class="filter-chip active" type="button" data-auth-mode="login" aria-pressed="true">Anmelden</button>
+            <button class="filter-chip" type="button" data-auth-mode="signup" aria-pressed="false">Konto erstellen</button>
+          </div>
+          <p class="auth-copy" id="auth-copy">Melde dich an, damit deine Konzertliste auf Handy, Tablet und Computer gleich bleibt.</p>
+          <p class="auth-config-note" id="auth-config-note" hidden>Der Cloud-Speicher ist noch nicht eingerichtet. Trage zuerst Supabase-URL und Anon-Key in der index.html ein.</p>
+          <div class="auth-fields">
+            <div class="field">
+              <label for="auth-email-input">E-Mail</label>
+              <input class="input" id="auth-email-input" type="email" autocomplete="email" required>
+            </div>
+            <div class="field">
+              <label for="auth-password-input">Passwort</label>
+              <input class="input" id="auth-password-input" type="password" minlength="6" autocomplete="current-password" required>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="settings-footer">
+        <button class="button" id="auth-submit-button" type="submit">Anmelden</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog class="recap-dialog" id="recap-dialog" aria-labelledby="recap-title">
+    <div class="recap-card">
+      <header class="recap-header">
+        <div>
+          <span class="recap-kicker">Konzert-Recap</span>
+          <h2 id="recap-title">Dein Jahr in Live-Musik</h2>
+        </div>
+        <button class="icon-button" id="close-recap-button" type="button" aria-label="Recap schließen" title="Schließen">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+        </button>
+      </header>
+      <div class="recap-toolbar">
+        <label for="recap-year-select">Jahr</label>
+        <select class="select" id="recap-year-select"></select>
+      </div>
+      <div class="recap-stage" id="recap-stage"></div>
+      <footer class="recap-footer">
+        <button class="button button-light" id="recap-prev-button" type="button">Zurück</button>
+        <div class="recap-dots" id="recap-dots" aria-label="Recap-Folien"></div>
+        <button class="button button-light" id="recap-next-button" type="button">Weiter</button>
+      </footer>
+    </div>
+  </dialog>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="xlsx.full.min.js"></script>
@@ -1988,8 +2327,17 @@
       const PREFERENCES_KEY = "meine-konzertliste-einstellungen-v1";
       const VENUES_KEY = "meine-konzertliste-orte-v1";
       const BANDS_KEY = "meine-konzertliste-bands-v1";
-      const GITHUB_SYNC_CONFIG_KEY = "meine-konzertliste-github-sync-v1";
+      const AUTH_SESSION_KEY = "meine-konzertliste-auth-session-v1";
+      const SUPABASE_URL = "https://jpelsxriiuggruaulpkt.supabase.co/rest/v1/";
+      const SUPABASE_ANON_KEY = "sb_publishable_t_s79gLiHAYYI_ADxlu7Ng_MDnf--vr";
       const DEFAULT_STATS = ["bands", "appearances", "places", "year", "upcoming", "averageRating", "topBands", "topVenues"];
+
+      const authRuntime = {
+        session: loadAuthSession(),
+        user: null,
+        mode: "login"
+      };
+      authRuntime.user = authRuntime.session?.user || null;
 
       const initialConcerts = loadConcerts();
       const savedPreferences = loadPreferences();
@@ -2004,13 +2352,19 @@
         statSettings: Array.isArray(savedPreferences.statSettings) ? savedPreferences.statSettings : DEFAULT_STATS
       };
 
-      const githubRuntime = {
+      const cloudRuntime = {
         timer: null,
         applyingRemote: false,
         pushing: false,
         pulling: false,
-        config: null,
-        lastSha: null
+        initialized: false,
+        lastSyncedAt: ""
+      };
+
+      const recapRuntime = {
+        year: "",
+        index: 0,
+        slides: []
       };
 
       const elements = {
@@ -2041,6 +2395,9 @@
         bandOptions: document.querySelector("#band-options"),
         venueOptions: document.querySelector("#venue-options"),
         settingsButton: document.querySelector("#settings-button"),
+        accountButton: document.querySelector("#account-button"),
+        accountButtonLabel: document.querySelector("#account-button-label"),
+        recapButton: document.querySelector("#recap-button"),
         installAppButton: document.querySelector("#install-app-button"),
         settingsDialog: document.querySelector("#settings-dialog"),
         settingsForm: document.querySelector("#settings-form"),
@@ -2048,18 +2405,34 @@
         venueLibrary: document.querySelector("#venue-library"),
         newVenueInput: document.querySelector("#new-venue-input"),
         addVenueButton: document.querySelector("#add-venue-button"),
-        githubOwner: document.querySelector("#github-owner-input"),
-        githubRepo: document.querySelector("#github-repo-input"),
-        githubBranch: document.querySelector("#github-branch-input"),
-        githubPath: document.querySelector("#github-path-input"),
-        githubToken: document.querySelector("#github-token-input"),
-        saveGithubConfigButton: document.querySelector("#save-github-config-button"),
-        githubPushButton: document.querySelector("#github-push-button"),
-        githubPullButton: document.querySelector("#github-pull-button"),
-        removeGithubConfigButton: document.querySelector("#remove-github-config-button"),
+        openAuthButton: document.querySelector("#open-auth-button"),
+        cloudPushButton: document.querySelector("#cloud-push-button"),
+        cloudPullButton: document.querySelector("#cloud-pull-button"),
+        settingsLogoutButton: document.querySelector("#settings-logout-button"),
         syncStatus: document.querySelector("#sync-status"),
         syncStatusText: document.querySelector("#sync-status-text"),
         syncHelp: document.querySelector("#sync-help"),
+        authDialog: document.querySelector("#auth-dialog"),
+        authForm: document.querySelector("#auth-form"),
+        closeAuthButton: document.querySelector("#close-auth-button"),
+        authAccountCard: document.querySelector("#auth-account-card"),
+        authAccountEmail: document.querySelector("#auth-account-email"),
+        authEntryPanel: document.querySelector("#auth-entry-panel"),
+        authModeButtons: document.querySelectorAll("[data-auth-mode]"),
+        authCopy: document.querySelector("#auth-copy"),
+        authConfigNote: document.querySelector("#auth-config-note"),
+        authEmail: document.querySelector("#auth-email-input"),
+        authPassword: document.querySelector("#auth-password-input"),
+        authSubmitButton: document.querySelector("#auth-submit-button"),
+        authPullButton: document.querySelector("#auth-pull-button"),
+        authLogoutButton: document.querySelector("#auth-logout-button"),
+        recapDialog: document.querySelector("#recap-dialog"),
+        closeRecapButton: document.querySelector("#close-recap-button"),
+        recapYearSelect: document.querySelector("#recap-year-select"),
+        recapStage: document.querySelector("#recap-stage"),
+        recapDots: document.querySelector("#recap-dots"),
+        recapPrevButton: document.querySelector("#recap-prev-button"),
+        recapNextButton: document.querySelector("#recap-next-button"),
         statSettingInputs: document.querySelectorAll('[name="stat-setting"]'),
         exportButton: document.querySelector("#export-button"),
         importFile: document.querySelector("#import-file"),
@@ -2082,9 +2455,33 @@
       elements.sort.value = state.sort;
       updateRatingControl();
 
+      function scopedStorageKey(key) {
+        return authRuntime.user?.id ? `${key}-${authRuntime.user.id}` : key;
+      }
+
+      function loadAuthSession() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(AUTH_SESSION_KEY) || "null");
+          if (saved?.access_token && saved?.refresh_token && saved?.user?.id) return saved;
+        } catch (error) {
+          console.warn("Die gespeicherte Anmeldung konnte nicht gelesen werden.", error);
+        }
+        return null;
+      }
+
+      function setAuthSession(session) {
+        authRuntime.session = session;
+        authRuntime.user = session?.user || null;
+        if (session) {
+          localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(session));
+        } else {
+          localStorage.removeItem(AUTH_SESSION_KEY);
+        }
+      }
+
       function loadConcerts() {
         try {
-          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          const saved = JSON.parse(localStorage.getItem(scopedStorageKey(STORAGE_KEY)) || "[]");
           return Array.isArray(saved) ? saved.filter(isValidConcert) : [];
         } catch (error) {
           console.warn("Die gespeicherte Konzertliste konnte nicht gelesen werden.", error);
@@ -2094,27 +2491,15 @@
 
       function loadPreferences() {
         try {
-          return JSON.parse(localStorage.getItem(PREFERENCES_KEY) || "{}");
+          return JSON.parse(localStorage.getItem(scopedStorageKey(PREFERENCES_KEY)) || "{}");
         } catch {
           return {};
         }
-      }
-
-      function loadSyncConfig() {
-        try {
-          return JSON.parse(localStorage.getItem(GITHUB_SYNC_CONFIG_KEY) || "{}");
-        } catch {
-          return {};
-        }
-      }
-
-      function saveSyncConfig(config) {
-        localStorage.setItem(GITHUB_SYNC_CONFIG_KEY, JSON.stringify(config));
       }
 
       function loadVenues(concerts) {
         try {
-          const saved = localStorage.getItem(VENUES_KEY);
+          const saved = localStorage.getItem(scopedStorageKey(VENUES_KEY));
           if (saved === null) {
             return uniqueSorted(concerts.map(concert => concert.venue));
           }
@@ -2129,7 +2514,7 @@
       function loadBands(concerts) {
         const concertBands = concerts.flatMap(concert => [concert.mainBand, ...concert.supportBands]);
         try {
-          const saved = JSON.parse(localStorage.getItem(BANDS_KEY) || "[]");
+          const saved = JSON.parse(localStorage.getItem(scopedStorageKey(BANDS_KEY)) || "[]");
           return uniqueBands([...(Array.isArray(saved) ? saved : []), ...concertBands]);
         } catch (error) {
           console.warn("Die gespeicherten Bandnamen konnten nicht gelesen werden.", error);
@@ -2147,25 +2532,25 @@
       }
 
       function saveConcerts() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.concerts));
-        queueGitHubSync();
+        localStorage.setItem(scopedStorageKey(STORAGE_KEY), JSON.stringify(state.concerts));
+        queueCloudSync();
       }
 
       function savePreferences() {
-        localStorage.setItem(PREFERENCES_KEY, JSON.stringify({
+        localStorage.setItem(scopedStorageKey(PREFERENCES_KEY), JSON.stringify({
           statSettings: state.statSettings
         }));
-        queueGitHubSync();
+        queueCloudSync();
       }
 
       function saveVenues() {
-        localStorage.setItem(VENUES_KEY, JSON.stringify(state.venues));
-        queueGitHubSync();
+        localStorage.setItem(scopedStorageKey(VENUES_KEY), JSON.stringify(state.venues));
+        queueCloudSync();
       }
 
       function saveBands() {
-        localStorage.setItem(BANDS_KEY, JSON.stringify(state.bands));
-        queueGitHubSync();
+        localStorage.setItem(scopedStorageKey(BANDS_KEY), JSON.stringify(state.bands));
+        queueCloudSync();
       }
 
       function normalize(value) {
@@ -2640,6 +3025,85 @@
         elements.syncStatusText.textContent = message;
       }
 
+      function isSupabaseConfigured() {
+        return /^https:\/\/[a-z0-9.-]+\.supabase\.co$/i.test(SUPABASE_URL.trim()) &&
+          SUPABASE_ANON_KEY.trim().length > 30;
+      }
+
+      function supabaseBaseUrl() {
+        return SUPABASE_URL.trim().replace(/\/+$/, "");
+      }
+
+      async function parseSupabaseError(response) {
+        let payload = null;
+        try {
+          payload = await response.json();
+        } catch {
+          payload = null;
+        }
+        const rawMessage = payload?.msg || payload?.message || payload?.error_description || payload?.error || "";
+        if (/invalid login credentials/i.test(rawMessage)) return new Error("E-Mail oder Passwort stimmen nicht.");
+        if (/email not confirmed/i.test(rawMessage)) return new Error("Bitte bestätige zuerst die E-Mail und melde dich dann an.");
+        if (/user already registered|already been registered/i.test(rawMessage)) return new Error("Für diese E-Mail gibt es bereits ein Konto.");
+        return new Error(rawMessage || `Cloud-Speicher antwortet mit Status ${response.status}.`);
+      }
+
+      function normalizeSession(data) {
+        if (!data?.access_token || !data?.refresh_token || !data?.user?.id) return null;
+        return {
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+          expires_at: data.expires_at || Math.floor(Date.now() / 1000) + Number(data.expires_in || 3600),
+          token_type: data.token_type || "bearer",
+          user: data.user
+        };
+      }
+
+      async function supabaseRequest(path, options = {}) {
+        if (!isSupabaseConfigured()) {
+          throw new Error("Der Cloud-Speicher ist noch nicht eingerichtet.");
+        }
+
+        const headers = {
+          apikey: SUPABASE_ANON_KEY.trim(),
+          ...(options.headers || {})
+        };
+        if (options.body !== undefined) headers["Content-Type"] = "application/json";
+        if (options.auth !== false) {
+          const session = await ensureFreshSession();
+          headers.Authorization = `Bearer ${session.access_token}`;
+        }
+
+        const response = await fetch(`${supabaseBaseUrl()}${path}`, {
+          method: options.method || "GET",
+          headers,
+          body: options.body === undefined ? undefined : JSON.stringify(options.body),
+          cache: "no-store"
+        });
+
+        if (!response.ok) throw await parseSupabaseError(response);
+        if (response.status === 204) return null;
+        return response.json();
+      }
+
+      async function ensureFreshSession() {
+        const session = authRuntime.session;
+        if (!session?.access_token) throw new Error("Bitte melde dich zuerst an.");
+        const expiresAt = Number(session.expires_at || 0);
+        if (expiresAt && expiresAt - 60 > Math.floor(Date.now() / 1000)) return session;
+
+        const refreshed = await supabaseRequest("/auth/v1/token?grant_type=refresh_token", {
+          method: "POST",
+          auth: false,
+          body: { refresh_token: session.refresh_token }
+        });
+        const nextSession = normalizeSession(refreshed);
+        if (!nextSession) throw new Error("Die Anmeldung ist abgelaufen. Bitte melde dich erneut an.");
+        setAuthSession(nextSession);
+        updateAuthInterface();
+        return nextSession;
+      }
+
       function archivePayload() {
         return {
           version: 2,
@@ -2652,12 +3116,37 @@
         };
       }
 
+      function archiveHasContent(payload) {
+        return Array.isArray(payload?.concerts) && payload.concerts.length > 0;
+      }
+
+      function persistArchiveLocally() {
+        localStorage.setItem(scopedStorageKey(STORAGE_KEY), JSON.stringify(state.concerts));
+        localStorage.setItem(scopedStorageKey(VENUES_KEY), JSON.stringify(state.venues));
+        localStorage.setItem(scopedStorageKey(BANDS_KEY), JSON.stringify(state.bands));
+        localStorage.setItem(scopedStorageKey(PREFERENCES_KEY), JSON.stringify({
+          statSettings: state.statSettings
+        }));
+      }
+
+      function applyStoredArchive() {
+        const concerts = loadConcerts();
+        const preferences = loadPreferences();
+        state.concerts = concerts;
+        state.venues = loadVenues(concerts);
+        state.bands = loadBands(concerts);
+        state.statSettings = Array.isArray(preferences.statSettings) ? preferences.statSettings : DEFAULT_STATS;
+        renderBandOptions();
+        renderVenueOptions();
+        render();
+      }
+
       function applyCloudPayload(payload) {
         if (!payload || !Array.isArray(payload.concerts) || !payload.concerts.every(isValidConcert)) {
           throw new Error("Die Cloud-Daten haben ein ungültiges Format.");
         }
 
-        githubRuntime.applyingRemote = true;
+        cloudRuntime.applyingRemote = true;
         try {
           state.bands = uniqueBands([
             ...(Array.isArray(payload.bands) ? payload.bands.filter(value => typeof value === "string") : []),
@@ -2684,165 +3173,372 @@
             }
           }
 
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(state.concerts));
-          localStorage.setItem(VENUES_KEY, JSON.stringify(state.venues));
-          localStorage.setItem(BANDS_KEY, JSON.stringify(state.bands));
-          localStorage.setItem(PREFERENCES_KEY, JSON.stringify({
-            statSettings: state.statSettings
-          }));
+          persistArchiveLocally();
           renderBandOptions();
           renderVenueOptions();
           render();
         } finally {
-          githubRuntime.applyingRemote = false;
+          cloudRuntime.applyingRemote = false;
         }
       }
 
-      function githubApiUrl(config) {
-        const path = config.path.split("/").filter(Boolean).map(encodeURIComponent).join("/");
-        return `https://api.github.com/repos/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repo)}/contents/${path}`;
-      }
+      function updateAuthInterface() {
+        const configured = isSupabaseConfigured();
+        const signedIn = Boolean(authRuntime.user);
+        const email = authRuntime.user?.email || "Angemeldet";
 
-      function githubHeaders(config) {
-        return {
-          Accept: "application/vnd.github+json",
-          Authorization: `Bearer ${config.token}`,
-          "X-GitHub-Api-Version": "2022-11-28"
-        };
-      }
+        elements.accountButtonLabel.textContent = signedIn ? "Konto" : "Anmelden";
+        elements.accountButton.title = signedIn ? `Konto: ${email}` : "Konto erstellen oder anmelden";
+        elements.openAuthButton.hidden = signedIn;
+        elements.cloudPushButton.hidden = !signedIn;
+        elements.cloudPullButton.hidden = !signedIn;
+        elements.settingsLogoutButton.hidden = !signedIn;
+        elements.authAccountCard.hidden = !signedIn;
+        elements.authEntryPanel.hidden = signedIn;
+        elements.authSubmitButton.hidden = signedIn;
+        elements.authConfigNote.hidden = configured;
+        elements.authEmail.disabled = !configured;
+        elements.authPassword.disabled = !configured;
+        elements.authSubmitButton.disabled = !configured;
+        elements.authAccountEmail.textContent = email;
 
-      function encodeBase64Utf8(value) {
-        const bytes = new TextEncoder().encode(value);
-        let binary = "";
-        const chunkSize = 8192;
-        for (let index = 0; index < bytes.length; index += chunkSize) {
-          binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
-        }
-        return btoa(binary);
-      }
-
-      function decodeBase64Utf8(value) {
-        const binary = atob(value.replace(/\s/g, ""));
-        const bytes = Uint8Array.from(binary, character => character.charCodeAt(0));
-        return new TextDecoder().decode(bytes);
-      }
-
-      function queueGitHubSync() {
-        if (githubRuntime.applyingRemote || !githubRuntime.config) return;
-        clearTimeout(githubRuntime.timer);
-        githubRuntime.timer = setTimeout(() => pushGitHubData(), 900);
-      }
-
-      async function pushGitHubData() {
-        const config = githubRuntime.config;
-        if (!config || githubRuntime.pushing) return false;
-        githubRuntime.pushing = true;
-        clearTimeout(githubRuntime.timer);
-        githubRuntime.timer = null;
-        setSyncStatus("working", "Änderungen werden zu GitHub übertragen …");
-
-        try {
-          const url = githubApiUrl(config);
-          const lookup = await fetch(`${url}?ref=${encodeURIComponent(config.branch)}`, {
-            headers: githubHeaders(config),
-            cache: "no-store"
-          });
-          let sha;
-          if (lookup.ok) {
-            const currentFile = await lookup.json();
-            sha = currentFile.sha;
-            if (githubRuntime.lastSha && githubRuntime.lastSha !== sha) {
-              throw new Error("Neuere Cloud-Daten gefunden: Bitte zuerst Cloud-Daten laden.");
-            }
-          } else if (lookup.status !== 404) {
-            throw new Error(`GitHub antwortet mit Status ${lookup.status}`);
-          }
-
-          const response = await fetch(url, {
-            method: "PUT",
-            headers: { ...githubHeaders(config), "Content-Type": "application/json" },
-            body: JSON.stringify({
-              message: `Konzertliste synchronisieren (${new Date().toLocaleString("de-DE")})`,
-              content: encodeBase64Utf8(JSON.stringify(archivePayload(), null, 2)),
-              branch: config.branch,
-              ...(sha ? { sha } : {})
-            })
-          });
-
-          if (!response.ok) {
-            if (response.status === 409) throw new Error("GitHub-Konflikt: Lade zuerst die Cloud-Daten neu.");
-            throw new Error(`GitHub antwortet mit Status ${response.status}`);
-          }
-          const result = await response.json();
-          githubRuntime.lastSha = result.content?.sha || null;
-          setSyncStatus("online", `Mit GitHub synchronisiert · ${config.owner}/${config.repo}`);
-          elements.syncHelp.textContent = `Datendatei: ${config.path} auf Branch ${config.branch}`;
-          return true;
-        } catch (error) {
-          console.warn("GitHub-Synchronisierung fehlgeschlagen", error);
-          setSyncStatus("error", error.message || "GitHub-Synchronisierung fehlgeschlagen");
-          return false;
-        } finally {
-          githubRuntime.pushing = false;
-        }
-      }
-
-      async function pullGitHubData() {
-        const config = githubRuntime.config;
-        if (!config || githubRuntime.pushing || githubRuntime.pulling) return false;
-        githubRuntime.pulling = true;
-        setSyncStatus("working", "Aktuelle Daten werden von GitHub geladen …");
-
-        try {
-          const response = await fetch(`${githubApiUrl(config)}?ref=${encodeURIComponent(config.branch)}`, {
-            headers: githubHeaders(config),
-            cache: "no-store"
-          });
-
-          if (response.status === 404) {
-            await pushGitHubData();
-            return;
-          }
-          if (!response.ok) throw new Error(`GitHub antwortet mit Status ${response.status}`);
-
-          const file = await response.json();
-          const payload = JSON.parse(decodeBase64Utf8(file.content));
-          applyCloudPayload(payload);
-          githubRuntime.lastSha = file.sha;
-          setSyncStatus("online", `Mit GitHub synchronisiert · ${config.owner}/${config.repo}`);
-          elements.syncHelp.textContent = `Datendatei: ${config.path} auf Branch ${config.branch}`;
-          return true;
-        } catch (error) {
-          console.warn("GitHub-Daten konnten nicht geladen werden", error);
-          setSyncStatus("error", error.message || "GitHub-Daten konnten nicht geladen werden");
-          return false;
-        } finally {
-          githubRuntime.pulling = false;
-        }
-      }
-
-      async function initializeGitHubSync() {
-        const config = loadSyncConfig();
-        elements.githubOwner.value = config.owner || "";
-        elements.githubRepo.value = config.repo || "";
-        elements.githubBranch.value = config.branch || "main";
-        elements.githubPath.value = config.path || "concert-data.json";
-        elements.githubToken.value = config.token || "";
-
-        if (!config.owner || !config.repo || !config.branch || !config.path || !config.token) {
-          githubRuntime.config = null;
-          elements.githubPushButton.hidden = true;
-          elements.githubPullButton.hidden = true;
-          elements.removeGithubConfigButton.hidden = true;
+        if (cloudRuntime.pushing || cloudRuntime.pulling) return;
+        if (!configured) {
+          setSyncStatus("error", "Cloud noch nicht eingerichtet");
+          elements.syncHelp.textContent = "Trage Supabase-URL und Anon-Key einmalig in der index.html ein.";
+        } else if (signedIn) {
+          setSyncStatus("online", `Angemeldet · ${email}`);
+          elements.syncHelp.textContent = cloudRuntime.lastSyncedAt
+            ? `Zuletzt synchronisiert: ${cloudRuntime.lastSyncedAt}`
+            : "Änderungen werden automatisch mit deinem Konto synchronisiert.";
+        } else {
           setSyncStatus("", "Nur lokal gespeichert");
+          elements.syncHelp.textContent = "Melde dich an, damit deine Liste auf allen Geräten verfügbar ist.";
+        }
+      }
+
+      function setAuthMode(mode) {
+        authRuntime.mode = mode === "signup" ? "signup" : "login";
+        elements.authModeButtons.forEach(button => {
+          const active = button.dataset.authMode === authRuntime.mode;
+          button.classList.toggle("active", active);
+          button.setAttribute("aria-pressed", String(active));
+        });
+        elements.authSubmitButton.textContent = authRuntime.mode === "signup" ? "Konto erstellen" : "Anmelden";
+        elements.authPassword.autocomplete = authRuntime.mode === "signup" ? "new-password" : "current-password";
+        elements.authCopy.textContent = authRuntime.mode === "signup"
+          ? "Erstelle ein Konto und deine Liste wird danach automatisch online gespeichert."
+          : "Melde dich an, damit deine Konzertliste auf Handy, Tablet und Computer gleich bleibt.";
+      }
+
+      function openAuthDialog(mode = "login") {
+        setAuthMode(mode);
+        updateAuthInterface();
+        if (!elements.authDialog.open) elements.authDialog.showModal();
+        if (!authRuntime.user && isSupabaseConfigured()) {
+          window.setTimeout(() => elements.authEmail.focus({ preventScroll: true }), 120);
+        }
+      }
+
+      async function completeSignedInSetup(session, migrationPayload) {
+        setAuthSession(session);
+        const userLocalConcerts = loadConcerts();
+        if (userLocalConcerts.length > 0) {
+          applyStoredArchive();
+        } else if (archiveHasContent(migrationPayload)) {
+          persistArchiveLocally();
+        } else {
+          applyStoredArchive();
+        }
+        updateAuthInterface();
+        await pullCloudData({ migrationPayload });
+      }
+
+      async function signInWithPassword(email, password) {
+        const data = await supabaseRequest("/auth/v1/token?grant_type=password", {
+          method: "POST",
+          auth: false,
+          body: { email, password }
+        });
+        const session = normalizeSession(data);
+        if (!session) throw new Error("Die Anmeldung konnte nicht abgeschlossen werden.");
+        await completeSignedInSetup(session, archivePayload());
+      }
+
+      async function signUpWithPassword(email, password) {
+        const data = await supabaseRequest("/auth/v1/signup", {
+          method: "POST",
+          auth: false,
+          body: { email, password }
+        });
+        const session = normalizeSession(data);
+        if (!session) {
+          setAuthMode("login");
+          showToast("Konto erstellt. Bitte bestätige deine E-Mail und melde dich an.");
+          return;
+        }
+        await completeSignedInSetup(session, archivePayload());
+      }
+
+      async function signOut() {
+        clearTimeout(cloudRuntime.timer);
+        cloudRuntime.timer = null;
+        try {
+          if (authRuntime.session && isSupabaseConfigured()) {
+            await supabaseRequest("/auth/v1/logout", { method: "POST" });
+          }
+        } catch (error) {
+          console.warn("Abmeldung bei Supabase fehlgeschlagen", error);
+        }
+        setAuthSession(null);
+        applyStoredArchive();
+        updateAuthInterface();
+        showToast("Du bist abgemeldet.");
+      }
+
+      function queueCloudSync() {
+        if (cloudRuntime.applyingRemote || !authRuntime.user || !isSupabaseConfigured()) return;
+        clearTimeout(cloudRuntime.timer);
+        cloudRuntime.timer = setTimeout(() => pushCloudData(), 900);
+      }
+
+      async function pushCloudData() {
+        if (!authRuntime.user || cloudRuntime.pushing) return false;
+        cloudRuntime.pushing = true;
+        clearTimeout(cloudRuntime.timer);
+        cloudRuntime.timer = null;
+        setSyncStatus("working", "Änderungen werden gespeichert …");
+
+        try {
+          await supabaseRequest("/rest/v1/concert_archives?on_conflict=user_id", {
+            method: "POST",
+            headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+            body: {
+              user_id: authRuntime.user.id,
+              payload: archivePayload(),
+              updated_at: new Date().toISOString()
+            }
+          });
+          cloudRuntime.lastSyncedAt = new Date().toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" });
+          setSyncStatus("online", `Gespeichert · ${authRuntime.user.email || "Konto"}`);
+          elements.syncHelp.textContent = `Zuletzt synchronisiert: ${cloudRuntime.lastSyncedAt}`;
+          return true;
+        } catch (error) {
+          console.warn("Cloud-Synchronisierung fehlgeschlagen", error);
+          setSyncStatus("error", error.message || "Cloud-Synchronisierung fehlgeschlagen");
+          return false;
+        } finally {
+          cloudRuntime.pushing = false;
+        }
+      }
+
+      async function pullCloudData(options = {}) {
+        if (!authRuntime.user || cloudRuntime.pushing || cloudRuntime.pulling) return false;
+        cloudRuntime.pulling = true;
+        setSyncStatus("working", "Cloud-Liste wird geladen …");
+
+        try {
+          const rows = await supabaseRequest(`/rest/v1/concert_archives?select=payload,updated_at&user_id=eq.${encodeURIComponent(authRuntime.user.id)}&limit=1`);
+          const row = Array.isArray(rows) ? rows[0] : null;
+          if (!row || !archiveHasContent(row.payload)) {
+            if (archiveHasContent(archivePayload()) || archiveHasContent(options.migrationPayload)) {
+              await pushCloudData();
+              return true;
+            }
+            setSyncStatus("online", `Angemeldet · ${authRuntime.user.email || "Konto"}`);
+            elements.syncHelp.textContent = "Deine Cloud-Liste ist bereit.";
+            return true;
+          }
+
+          applyCloudPayload(row.payload);
+          cloudRuntime.lastSyncedAt = row.updated_at
+            ? new Date(row.updated_at).toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" })
+            : new Date().toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" });
+          setSyncStatus("online", `Geladen · ${authRuntime.user.email || "Konto"}`);
+          elements.syncHelp.textContent = `Zuletzt synchronisiert: ${cloudRuntime.lastSyncedAt}`;
+          return true;
+        } catch (error) {
+          console.warn("Cloud-Daten konnten nicht geladen werden", error);
+          setSyncStatus("error", error.message || "Cloud-Daten konnten nicht geladen werden");
+          return false;
+        } finally {
+          cloudRuntime.pulling = false;
+        }
+      }
+
+      async function initializeCloudSync() {
+        updateAuthInterface();
+        if (!authRuntime.user || !isSupabaseConfigured()) return false;
+        try {
+          await ensureFreshSession();
+          applyStoredArchive();
+          return pullCloudData();
+        } catch (error) {
+          console.warn("Cloud-Anmeldung konnte nicht erneuert werden", error);
+          setAuthSession(null);
+          applyStoredArchive();
+          updateAuthInterface();
+          return false;
+        }
+      }
+
+      function recapYears() {
+        return [...new Set(completedConcerts().map(concert => concert.date.slice(0, 4)))]
+          .sort((a, b) => b.localeCompare(a));
+      }
+
+      function defaultRecapYear() {
+        const years = recapYears();
+        const currentYear = String(new Date().getFullYear());
+        const isYearEnd = new Date().getMonth() === 11;
+        if (isYearEnd && years.includes(currentYear)) return currentYear;
+        return years[0] || currentYear;
+      }
+
+      function recapConcerts(year) {
+        return completedConcerts()
+          .filter(concert => concert.date.startsWith(String(year)))
+          .sort((a, b) => a.date.localeCompare(b.date));
+      }
+
+      function buildRecapSlides(year) {
+        const concerts = recapConcerts(year);
+        if (concerts.length === 0) return [];
+
+        const bands = allBandAppearances(concerts);
+        const uniqueBandCount = new Set(bands.map(keyFor)).size;
+        const topBand = countValues(bands)[0];
+        const topVenue = countValues(concerts.map(concert => concert.venue))[0];
+        const monthCounts = countValues(concerts.map(concert => String(parseDate(concert.date).getMonth())));
+        const favoriteMonth = monthCounts[0]
+          ? new Intl.DateTimeFormat("de-DE", { month: "long" }).format(new Date(2020, Number(monthCounts[0].name), 1))
+          : "–";
+        const ratedConcerts = concerts
+          .filter(concert => concertRating(concert) > 0)
+          .sort((a, b) => concertRating(b) - concertRating(a) || b.date.localeCompare(a.date));
+        const bestConcert = ratedConcerts[0];
+        const firstConcert = concerts[0];
+        const lastConcert = concerts.at(-1);
+        const supportCount = concerts.reduce((sum, concert) => sum + concert.supportBands.length, 0);
+        const lineupSize = bands.length;
+
+        return [
+          {
+            stat: concerts.length,
+            title: `${year} war live.`,
+            body: `Du hast ${concerts.length === 1 ? "einen Abend" : `${concerts.length} Abende`} festgehalten und daraus dein Konzertjahr gebaut.`,
+            facts: [
+              { value: uniqueBandCount, label: "verschiedene Bands" },
+              { value: lineupSize, label: "Live-Auftritte" },
+              { value: favoriteMonth, label: "stärkster Monat" }
+            ]
+          },
+          {
+            title: "Dein meistgesehener Act",
+            stat: topBand?.count || 0,
+            body: topBand ? `${topBand.name} war ${topBand.count === 1 ? "einmal" : `${topBand.count} Mal`} in deinem Jahr dabei.` : "Noch kein klarer Spitzenplatz.",
+            facts: [
+              { value: topBand?.name || "–", label: "Top Act" },
+              { value: `${topBand?.count || 0}x`, label: "gesehen" },
+              { value: supportCount, label: "Vorbands" }
+            ]
+          },
+          {
+            title: "Dein Lieblingsort",
+            stat: topVenue?.count || 0,
+            body: topVenue ? `${topVenue.name} hat ${year} am häufigsten in deiner Liste geleuchtet.` : "Noch kein Ort hat sich abgesetzt.",
+            facts: [
+              { value: topVenue?.name || "–", label: "Top Venue" },
+              { value: new Set(concerts.map(concert => keyFor(concert.venue))).size, label: "Orte" },
+              { value: concerts.length, label: "Abende" }
+            ]
+          },
+          bestConcert ? {
+            title: "Dein höchstbewerteter Abend",
+            stat: `${concertRating(bestConcert)}/10`,
+            body: `${bestConcert.mainBand} am ${formatCompactDate(bestConcert.date)} war dein stärkster Eintrag des Jahres.`,
+            facts: [
+              { value: bestConcert.mainBand, label: "Hauptact" },
+              { value: bestConcert.venue, label: "Ort" },
+              { value: formatCompactDate(bestConcert.date), label: "Datum" }
+            ]
+          } : {
+            title: "Dein erster gespeicherter Abend",
+            stat: formatCompactDate(firstConcert.date),
+            body: `${firstConcert.mainBand} hat dein Konzertjahr eröffnet.`,
+            facts: [
+              { value: firstConcert.mainBand, label: "Hauptact" },
+              { value: firstConcert.venue, label: "Ort" },
+              { value: formatCompactDate(lastConcert.date), label: "letzter Eintrag" }
+            ]
+          },
+          {
+            title: "Das Finale",
+            stat: year,
+            body: `Von ${firstConcert.mainBand} bis ${lastConcert.mainBand}: Das war dein Konzertjahr in einer Liste, die wieder abrufbar bleibt.`,
+            facts: [
+              { value: formatCompactDate(firstConcert.date), label: "Start" },
+              { value: formatCompactDate(lastConcert.date), label: "Finale" },
+              { value: `${supportCount}`, label: "Vorbands" }
+            ]
+          }
+        ];
+      }
+
+      function renderRecap() {
+        const years = recapYears();
+        elements.recapYearSelect.innerHTML = years.length
+          ? years.map(year => `<option value="${escapeHtml(year)}">${escapeHtml(year)}</option>`).join("")
+          : `<option value="${escapeHtml(recapRuntime.year || new Date().getFullYear())}">${escapeHtml(recapRuntime.year || new Date().getFullYear())}</option>`;
+        elements.recapYearSelect.value = recapRuntime.year;
+
+        if (recapRuntime.slides.length === 0) {
+          elements.recapStage.innerHTML = `
+            <section class="recap-slide">
+              <h3>Noch kein Recap bereit.</h3>
+              <p>Sobald in einem Jahr stattgefundene Konzerte gespeichert sind, entsteht hier dein Jahresrückblick.</p>
+            </section>`;
+          elements.recapDots.innerHTML = "";
+          elements.recapPrevButton.disabled = true;
+          elements.recapNextButton.disabled = true;
           return;
         }
 
-        githubRuntime.config = config;
-        elements.githubPushButton.hidden = false;
-        elements.githubPullButton.hidden = false;
-        elements.removeGithubConfigButton.hidden = false;
-        return pullGitHubData();
+        const slide = recapRuntime.slides[recapRuntime.index];
+        const facts = slide.facts?.length
+          ? `<div class="recap-facts">${slide.facts.map(item => `
+              <div class="recap-fact"><strong title="${escapeHtml(item.value)}">${escapeHtml(item.value)}</strong><span>${escapeHtml(item.label)}</span></div>
+            `).join("")}</div>`
+          : "";
+        elements.recapStage.innerHTML = `
+          <section class="recap-slide">
+            <div class="recap-stat">${escapeHtml(slide.stat)}</div>
+            <h3>${escapeHtml(slide.title)}</h3>
+            <p>${escapeHtml(slide.body)}</p>
+            ${facts}
+          </section>`;
+        elements.recapDots.innerHTML = recapRuntime.slides.map((_, index) => `
+          <button class="recap-dot${index === recapRuntime.index ? " active" : ""}" type="button" data-recap-index="${index}" aria-label="Recap-Folie ${index + 1}"></button>
+        `).join("");
+        elements.recapPrevButton.disabled = recapRuntime.index === 0;
+        elements.recapNextButton.disabled = recapRuntime.index === recapRuntime.slides.length - 1;
+      }
+
+      function setRecapYear(year) {
+        recapRuntime.year = String(year || defaultRecapYear());
+        recapRuntime.index = 0;
+        recapRuntime.slides = buildRecapSlides(recapRuntime.year);
+        renderRecap();
+      }
+
+      function openRecap() {
+        setRecapYear(defaultRecapYear());
+        if (!elements.recapDialog.open) elements.recapDialog.showModal();
+      }
+
+      function changeRecapSlide(nextIndex) {
+        recapRuntime.index = Math.min(Math.max(nextIndex, 0), Math.max(recapRuntime.slides.length - 1, 0));
+        renderRecap();
       }
 
       function openConcertForm() {
@@ -2999,55 +3695,101 @@
           input.checked = state.statSettings.includes(input.value);
         });
         elements.newVenueInput.value = "";
+        updateAuthInterface();
         elements.settingsDialog.showModal();
       });
 
-      elements.saveGithubConfigButton.addEventListener("click", async () => {
-        const config = {
-          owner: elements.githubOwner.value.trim(),
-          repo: elements.githubRepo.value.trim(),
-          branch: elements.githubBranch.value.trim() || "main",
-          path: elements.githubPath.value.trim().replace(/^\/+/, "") || "concert-data.json",
-          token: elements.githubToken.value.trim()
-        };
-        if (!config.owner || !config.repo || !config.token || config.path.includes("..")) {
-          setSyncStatus("error", "GitHub-Angaben oder Token fehlen");
-          return;
-        }
-        saveSyncConfig(config);
-        githubRuntime.config = config;
-        setSyncStatus("working", "GitHub-Verbindung wird geprüft …");
-        const connected = await initializeGitHubSync();
-        showToast(connected
-          ? "GitHub-Verbindung gespeichert."
-          : "Einstellungen gespeichert – GitHub-Verbindung bitte prüfen.");
+      elements.accountButton.addEventListener("click", () => openAuthDialog(authRuntime.user ? "login" : "login"));
+      elements.openAuthButton.addEventListener("click", () => openAuthDialog("login"));
+
+      elements.authModeButtons.forEach(button => {
+        button.addEventListener("click", () => setAuthMode(button.dataset.authMode));
       });
 
-      elements.githubPushButton.addEventListener("click", async () => {
-        if (await pushGitHubData()) {
-          showToast("Aktuelle Liste wurde zu GitHub übertragen.");
+      elements.authForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!elements.authForm.reportValidity() || authRuntime.user) return;
+
+        const email = elements.authEmail.value.trim();
+        const password = elements.authPassword.value;
+        elements.authSubmitButton.disabled = true;
+        elements.authSubmitButton.textContent = authRuntime.mode === "signup" ? "Konto wird erstellt …" : "Anmeldung läuft …";
+
+        try {
+          if (authRuntime.mode === "signup") {
+            await signUpWithPassword(email, password);
+          } else {
+            await signInWithPassword(email, password);
+          }
+          elements.authPassword.value = "";
+          updateAuthInterface();
+          if (authRuntime.user) {
+            elements.authDialog.close();
+            showToast("Du bist angemeldet.");
+          }
+        } catch (error) {
+          console.warn("Anmeldung fehlgeschlagen", error);
+          showToast(error.message || "Die Anmeldung ist fehlgeschlagen.");
+        } finally {
+          elements.authSubmitButton.disabled = !isSupabaseConfigured();
+          setAuthMode(authRuntime.mode);
         }
       });
 
-      elements.githubPullButton.addEventListener("click", async () => {
-        if (await pullGitHubData()) {
-          showToast("Cloud-Daten wurden geladen.");
+      elements.cloudPushButton.addEventListener("click", async () => {
+        if (await pushCloudData()) {
+          showToast("Aktuelle Liste wurde gespeichert.");
         }
       });
 
-      elements.removeGithubConfigButton.addEventListener("click", () => {
-        clearTimeout(githubRuntime.timer);
-        githubRuntime.timer = null;
-        localStorage.removeItem(GITHUB_SYNC_CONFIG_KEY);
-        githubRuntime.config = null;
-        githubRuntime.lastSha = null;
-        elements.githubToken.value = "";
-        elements.githubPushButton.hidden = true;
-        elements.githubPullButton.hidden = true;
-        elements.removeGithubConfigButton.hidden = true;
-        setSyncStatus("", "Nur lokal gespeichert");
-        elements.syncHelp.textContent = "Die lokale Konzertliste bleibt vollständig erhalten.";
-        showToast("GitHub-Verbindung entfernt.");
+      elements.cloudPullButton.addEventListener("click", async () => {
+        if (await pullCloudData()) {
+          showToast("Cloud-Liste wurde geladen.");
+        }
+      });
+
+      elements.authPullButton.addEventListener("click", async () => {
+        if (await pullCloudData()) {
+          showToast("Cloud-Liste wurde geladen.");
+        }
+      });
+
+      elements.settingsLogoutButton.addEventListener("click", signOut);
+      elements.authLogoutButton.addEventListener("click", signOut);
+
+      elements.closeAuthButton.addEventListener("click", () => {
+        elements.authDialog.close();
+      });
+
+      elements.authDialog.addEventListener("click", event => {
+        if (event.target === elements.authDialog) elements.authDialog.close();
+      });
+
+      elements.recapButton.addEventListener("click", openRecap);
+
+      elements.closeRecapButton.addEventListener("click", () => {
+        elements.recapDialog.close();
+      });
+
+      elements.recapDialog.addEventListener("click", event => {
+        if (event.target === elements.recapDialog) elements.recapDialog.close();
+      });
+
+      elements.recapYearSelect.addEventListener("change", event => {
+        setRecapYear(event.target.value);
+      });
+
+      elements.recapPrevButton.addEventListener("click", () => {
+        changeRecapSlide(recapRuntime.index - 1);
+      });
+
+      elements.recapNextButton.addEventListener("click", () => {
+        changeRecapSlide(recapRuntime.index + 1);
+      });
+
+      elements.recapDots.addEventListener("click", event => {
+        const dot = event.target.closest("[data-recap-index]");
+        if (dot) changeRecapSlide(Number(dot.dataset.recapIndex));
       });
 
       elements.mobileStatsToggle.addEventListener("click", () => {
@@ -3302,22 +4044,22 @@
       document.addEventListener("visibilitychange", () => {
         if (!document.hidden) {
           render();
-          if (githubRuntime.config && !githubRuntime.timer) pullGitHubData();
+          if (authRuntime.user && !cloudRuntime.timer) pullCloudData();
         }
       });
 
       renderVenueOptions();
       renderBandOptions();
       render();
-      initializeGitHubSync();
+      initializeCloudSync();
       if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
         navigator.serviceWorker.register("./sw.js").catch(error => {
           console.warn("Offline-Modus konnte nicht aktiviert werden.", error);
         });
       }
       window.setInterval(() => {
-        if (githubRuntime.config && !githubRuntime.timer && !githubRuntime.pushing && !githubRuntime.pulling && !document.hidden) {
-          pullGitHubData();
+        if (authRuntime.user && !cloudRuntime.timer && !cloudRuntime.pushing && !cloudRuntime.pulling && !document.hidden) {
+          pullCloudData();
         }
       }, 60000);
     })();
