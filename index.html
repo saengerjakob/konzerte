@@ -2328,7 +2328,7 @@
       const VENUES_KEY = "meine-konzertliste-orte-v1";
       const BANDS_KEY = "meine-konzertliste-bands-v1";
       const AUTH_SESSION_KEY = "meine-konzertliste-auth-session-v1";
-      const SUPABASE_URL = "https://jpelsxriiuggruaulpkt.supabase.co/rest/v1/";
+      const SUPABASE_URL = "https://jpelsxriiuggruaulpkt.supabase.co";
       const SUPABASE_ANON_KEY = "sb_publishable_t_s79gLiHAYYI_ADxlu7Ng_MDnf--vr";
       const DEFAULT_STATS = ["bands", "appearances", "places", "year", "upcoming", "averageRating", "topBands", "topVenues"];
 
@@ -3025,13 +3025,19 @@
         elements.syncStatusText.textContent = message;
       }
 
+      function normalizedSupabaseUrl() {
+        return SUPABASE_URL.trim()
+          .replace(/\/+(rest|auth)\/v1\/?$/i, "")
+          .replace(/\/+$/, "");
+      }
+
       function isSupabaseConfigured() {
-        return /^https:\/\/[a-z0-9.-]+\.supabase\.co$/i.test(SUPABASE_URL.trim()) &&
+        return /^https:\/\/[a-z0-9.-]+\.supabase\.co$/i.test(normalizedSupabaseUrl()) &&
           SUPABASE_ANON_KEY.trim().length > 30;
       }
 
       function supabaseBaseUrl() {
-        return SUPABASE_URL.trim().replace(/\/+$/, "");
+        return normalizedSupabaseUrl();
       }
 
       async function parseSupabaseError(response) {

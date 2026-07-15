@@ -42,6 +42,10 @@ create table if not exists public.concert_archives (
 
 alter table public.concert_archives enable row level security;
 
+drop policy if exists "Users can read their own concert archive" on public.concert_archives;
+drop policy if exists "Users can insert their own concert archive" on public.concert_archives;
+drop policy if exists "Users can update their own concert archive" on public.concert_archives;
+
 create policy "Users can read their own concert archive"
 on public.concert_archives
 for select
