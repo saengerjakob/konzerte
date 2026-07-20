@@ -35,6 +35,115 @@
       --radius-md: 14px;
     }
 
+    body[data-theme="rock"] {
+      --page: #f6f3ef;
+      --surface-soft: #eee8df;
+      --ink: #231f20;
+      --muted: #756d68;
+      --line: #ddd3c8;
+      --accent: #9d2f3e;
+      --accent-dark: #6d1e2a;
+      --accent-soft: #f4dfe3;
+      --main: #285f6d;
+      --main-soft: #dcecf0;
+      --support: #b47a29;
+      --support-soft: #f3e7d3;
+    }
+
+    body[data-theme="metal"] {
+      --page: #171818;
+      --surface: #232525;
+      --surface-soft: #2d3030;
+      --ink: #f4f2ed;
+      --muted: #b7b4ae;
+      --line: #424646;
+      --accent: #c9a227;
+      --accent-dark: #f1d56a;
+      --accent-soft: #433819;
+      --main: #a84242;
+      --main-soft: #412626;
+      --support: #7b8a95;
+      --support-soft: #30383d;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+    }
+
+    body[data-theme="pop"] {
+      --page: #fff7fb;
+      --surface-soft: #f8edf4;
+      --ink: #242033;
+      --muted: #716a78;
+      --line: #ead9e4;
+      --accent: #d43d78;
+      --accent-dark: #9c2959;
+      --accent-soft: #f8dce9;
+      --main: #2f77a8;
+      --main-soft: #deeff8;
+      --support: #7361bf;
+      --support-soft: #e7e2fb;
+    }
+
+    body[data-theme="indie"] {
+      --page: #f4f4ee;
+      --surface-soft: #ecece2;
+      --ink: #25302c;
+      --muted: #69736d;
+      --line: #d8dbd0;
+      --accent: #557a51;
+      --accent-dark: #39583a;
+      --accent-soft: #dfeadb;
+      --main: #9b4b65;
+      --main-soft: #f1dde4;
+      --support: #3f6f8f;
+      --support-soft: #dcebf3;
+    }
+
+    body[data-theme="electro"] {
+      --page: #101722;
+      --surface: #17202d;
+      --surface-soft: #202b3a;
+      --ink: #eff6ff;
+      --muted: #a8b4c0;
+      --line: #334153;
+      --accent: #18a7b8;
+      --accent-dark: #75e3ed;
+      --accent-soft: #193f47;
+      --main: #c058a8;
+      --main-soft: #432743;
+      --support: #c8b449;
+      --support-soft: #3e371d;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
+    }
+
+    body[data-theme="jazz"] {
+      --page: #f5f0e8;
+      --surface-soft: #eee4d6;
+      --ink: #27221d;
+      --muted: #766b5f;
+      --line: #dfd2c0;
+      --accent: #8a4f2b;
+      --accent-dark: #62351c;
+      --accent-soft: #f0ddcf;
+      --main: #2f6f7a;
+      --main-soft: #dbecef;
+      --support: #8f7a2e;
+      --support-soft: #eee7cf;
+    }
+
+    body[data-theme="hiphop"] {
+      --page: #f4f2ea;
+      --surface-soft: #ece7d8;
+      --ink: #202026;
+      --muted: #6f6c66;
+      --line: #ddd5c3;
+      --accent: #0f756e;
+      --accent-dark: #084f4b;
+      --accent-soft: #d6ece8;
+      --main: #b24e2d;
+      --main-soft: #f2ddd4;
+      --support: #4b62a3;
+      --support-soft: #dfe5f5;
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -392,6 +501,15 @@
       flex-wrap: wrap;
       gap: 10px;
       margin-top: 28px;
+    }
+
+    .welcome-line {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 10px;
+      color: #e4efeb;
+      font-size: clamp(1rem, 2vw, 1.18rem);
+      font-weight: 780;
     }
 
     .button {
@@ -761,8 +879,57 @@
       font-weight: 730;
     }
 
+    .auth-first-name-field[hidden] {
+      display: none;
+    }
+
+    .admin-panel {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .admin-panel h4 {
+      margin: 0;
+      font-size: 0.92rem;
+    }
+
+    .admin-panel p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .admin-user-list {
+      display: grid;
+      gap: 7px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .admin-user-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+      gap: 8px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-soft);
+      font-size: 0.76rem;
+    }
+
+    .admin-user-row strong,
+    .admin-user-row span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .recap-dialog {
-      width: min(780px, calc(100% - 24px));
+      width: min(960px, calc(100% - 24px));
       max-height: min(90vh, 840px);
       margin: auto;
       padding: 0;
@@ -770,8 +937,8 @@
       border: 0;
       border-radius: 26px;
       color: #fff;
-      background: #111816;
-      box-shadow: 0 30px 90px rgba(22, 31, 28, 0.34);
+      background: #0b0c10;
+      box-shadow: 0 34px 110px rgba(8, 10, 12, 0.46);
     }
 
     .recap-dialog::backdrop {
@@ -783,8 +950,30 @@
       display: grid;
       max-height: min(90vh, 840px);
       grid-template-rows: auto auto minmax(0, 1fr) auto;
+      position: relative;
+      overflow: hidden;
       background:
-        linear-gradient(135deg, rgba(36, 107, 91, 0.92), rgba(30, 37, 35, 0.96) 48%, rgba(140, 60, 115, 0.88));
+        radial-gradient(circle at 10% 8%, rgba(117, 227, 237, 0.34), transparent 22rem),
+        radial-gradient(circle at 92% 18%, rgba(244, 196, 91, 0.28), transparent 20rem),
+        radial-gradient(circle at 88% 92%, rgba(217, 92, 140, 0.3), transparent 24rem),
+        linear-gradient(135deg, #11181d 0%, #161328 48%, #30152c 100%);
+    }
+
+    .recap-card::before {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent 82%);
+      content: "";
+      pointer-events: none;
+    }
+
+    .recap-card > * {
+      position: relative;
+      z-index: 1;
     }
 
     .recap-header,
@@ -840,21 +1029,39 @@
     }
 
     .recap-stage {
-      min-height: 390px;
+      min-height: 430px;
       overflow-y: auto;
       padding: 10px 22px 22px;
     }
 
     .recap-slide {
       display: grid;
-      min-height: 360px;
-      align-content: center;
-      gap: 18px;
+      position: relative;
+      overflow: hidden;
+      min-height: 410px;
+      align-content: stretch;
+      gap: 20px;
       padding: clamp(24px, 5vw, 46px);
       border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.1);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.065));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        0 24px 80px rgba(0, 0, 0, 0.22);
+      animation: recapEnter 420ms ease both;
+    }
+
+    .recap-slide::after {
+      position: absolute;
+      right: -80px;
+      bottom: -100px;
+      width: 280px;
+      height: 280px;
+      border: 56px solid rgba(255, 255, 255, 0.075);
+      border-radius: 50%;
+      content: "";
+      animation: recapPulse 4.8s ease-in-out infinite;
     }
 
     .recap-slide h3 {
@@ -872,11 +1079,71 @@
       font-size: clamp(0.95rem, 2vw, 1.08rem);
     }
 
+    .recap-body {
+      align-self: end;
+    }
+
+    .recap-slide-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .recap-label {
+      color: #b9f2e4;
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
     .recap-stat {
       font-size: clamp(4rem, 14vw, 8.4rem);
       line-height: 0.82;
       font-weight: 950;
       letter-spacing: -0.08em;
+    }
+
+    .recap-visual {
+      display: grid;
+      width: clamp(120px, 22vw, 190px);
+      aspect-ratio: 1;
+      place-items: center;
+      border-radius: 50%;
+      background:
+        conic-gradient(from 120deg, #fff, #75e3ed, #f4c45b, #d95c8c, #fff);
+      box-shadow: 0 20px 58px rgba(0, 0, 0, 0.28);
+      animation: recapSpin 9s linear infinite;
+    }
+
+    .recap-visual span {
+      display: grid;
+      width: 72%;
+      aspect-ratio: 1;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: rgba(15, 17, 21, 0.88);
+      font-size: clamp(1.25rem, 4vw, 2.4rem);
+      font-weight: 950;
+    }
+
+    .recap-ribbon {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .recap-ribbon span {
+      padding: 7px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.84);
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 0.7rem;
+      font-weight: 830;
     }
 
     .recap-facts {
@@ -928,6 +1195,35 @@
     .recap-dot.active {
       width: 22px;
       background: #fff;
+    }
+
+    @keyframes recapEnter {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes recapSpin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes recapPulse {
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 0.7;
+      }
+      50% {
+        transform: scale(1.08);
+        opacity: 1;
+      }
     }
 
     .settings-options {
@@ -1995,6 +2291,7 @@
       <main class="main-column">
         <section class="hero" aria-labelledby="page-title">
           <p class="eyebrow">Dein persönliches Live-Archiv</p>
+          <p class="welcome-line" id="welcome-line">Willkommen zurück.</p>
           <h1 id="page-title">Jeder Abend.<br>Eine Erinnerung.</h1>
           <p>Halte fest, wen du live gesehen hast – vom Headliner bis zur ersten Vorband.</p>
           <div class="hero-actions">
@@ -2098,6 +2395,7 @@
             <div>
               <label class="sr-only" for="sort-select">Liste sortieren</label>
               <select class="select" id="sort-select">
+                <option value="year-groups">Nach Jahren gruppiert</option>
                 <option value="date-desc">Datum: neu nach alt</option>
                 <option value="date-asc">Datum: alt nach neu</option>
                 <option value="band-asc">Band: A bis Z</option>
@@ -2195,6 +2493,24 @@
         <span class="settings-label">Gespeicherte Orte</span>
         <div class="venue-library" id="venue-library"></div>
 
+        <section class="settings-section" aria-labelledby="theme-settings-title">
+          <h3 id="theme-settings-title">Theme</h3>
+          <p>Wähle eine Stimmung für die App. Deine Auswahl wird mit deinem Konto synchronisiert.</p>
+          <div class="field">
+            <label for="theme-select">Genre-Theme</label>
+            <select class="select" id="theme-select">
+              <option value="classic">Classic</option>
+              <option value="rock">Rock</option>
+              <option value="metal">Metal</option>
+              <option value="pop">Pop</option>
+              <option value="indie">Indie</option>
+              <option value="electro">Electronic</option>
+              <option value="jazz">Jazz</option>
+              <option value="hiphop">Hip-Hop</option>
+            </select>
+          </div>
+        </section>
+
         <section class="settings-section" aria-labelledby="sync-settings-title">
           <h3 id="sync-settings-title">Konto &amp; Cloud-Sync</h3>
           <p>Mit E-Mail und Passwort anmelden, danach ist deine Liste auf allen Geräten verfügbar.</p>
@@ -2208,6 +2524,17 @@
             </div>
             <p class="sync-help" id="sync-help">Ohne Anmeldung bleibt die Liste nur auf diesem Gerät gespeichert.</p>
           </div>
+        </section>
+
+        <section class="settings-section" aria-labelledby="app-settings-title">
+          <h3 id="app-settings-title">App</h3>
+          <p>Installiere die Konzertliste auf deinem Handy oder Computer, wenn dein Browser das unterstützt.</p>
+          <button class="button button-ghost" id="settings-install-app-button" type="button">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2"></rect><path d="M12 6v8M9 11l3 3 3-3"></path><path d="M10 18h4"></path>
+            </svg>
+            App installieren
+          </button>
         </section>
 
         <section class="settings-section" aria-labelledby="stats-settings-title">
@@ -2275,6 +2602,10 @@
           <p class="auth-copy" id="auth-copy">Melde dich an, damit deine Konzertliste auf Handy, Tablet und Computer gleich bleibt.</p>
           <p class="auth-config-note" id="auth-config-note" hidden>Der Cloud-Speicher ist noch nicht eingerichtet. Trage zuerst Supabase-URL und Anon-Key in der index.html ein.</p>
           <div class="auth-fields">
+            <div class="field auth-first-name-field" id="auth-first-name-field" hidden>
+              <label for="auth-first-name-input">Vorname</label>
+              <input class="input" id="auth-first-name-input" type="text" maxlength="60" autocomplete="given-name">
+            </div>
             <div class="field">
               <label for="auth-email-input">E-Mail</label>
               <input class="input" id="auth-email-input" type="email" autocomplete="email" required>
@@ -2284,6 +2615,15 @@
               <input class="input" id="auth-password-input" type="password" minlength="6" autocomplete="current-password" required>
             </div>
           </div>
+        </div>
+
+        <div class="admin-panel" id="admin-panel" hidden>
+          <div>
+            <h4>Admin-Bereich</h4>
+            <p>Registrierte Konten mit Name und E-Mail.</p>
+          </div>
+          <button class="button button-ghost" id="admin-refresh-button" type="button">Nutzer laden</button>
+          <div class="admin-user-list" id="admin-user-list"></div>
         </div>
       </div>
       <footer class="settings-footer">
@@ -2330,12 +2670,15 @@
       const AUTH_SESSION_KEY = "meine-konzertliste-auth-session-v1";
       const SUPABASE_URL = "https://jpelsxriiuggruaulpkt.supabase.co";
       const SUPABASE_ANON_KEY = "sb_publishable_t_s79gLiHAYYI_ADxlu7Ng_MDnf--vr";
+      const ADMIN_EMAIL = "saengerjakob@mail.de";
+      const DEFAULT_THEME = "classic";
       const DEFAULT_STATS = ["bands", "appearances", "places", "year", "upcoming", "averageRating", "topBands", "topVenues"];
 
       const authRuntime = {
         session: loadAuthSession(),
         user: null,
-        mode: "login"
+        mode: "login",
+        profile: null
       };
       authRuntime.user = authRuntime.session?.user || null;
 
@@ -2347,8 +2690,9 @@
         venues: loadVenues(initialConcerts),
         bands: loadBands(initialConcerts),
         search: "",
-        sort: "date-desc",
+        sort: "year-groups",
         filter: "all",
+        theme: typeof savedPreferences.theme === "string" ? savedPreferences.theme : DEFAULT_THEME,
         statSettings: Array.isArray(savedPreferences.statSettings) ? savedPreferences.statSettings : DEFAULT_STATS
       };
 
@@ -2385,6 +2729,7 @@
         ratingOutput: document.querySelector("#rating-output"),
         submitButton: document.querySelector("#submit-button"),
         cancelEditButton: document.querySelector("#cancel-edit-button"),
+        welcomeLine: document.querySelector("#welcome-line"),
         list: document.querySelector("#concert-list"),
         listHeader: document.querySelector("#concert-list-header"),
         listSummary: document.querySelector("#list-summary"),
@@ -2405,6 +2750,8 @@
         venueLibrary: document.querySelector("#venue-library"),
         newVenueInput: document.querySelector("#new-venue-input"),
         addVenueButton: document.querySelector("#add-venue-button"),
+        themeSelect: document.querySelector("#theme-select"),
+        settingsInstallAppButton: document.querySelector("#settings-install-app-button"),
         openAuthButton: document.querySelector("#open-auth-button"),
         cloudPushButton: document.querySelector("#cloud-push-button"),
         cloudPullButton: document.querySelector("#cloud-pull-button"),
@@ -2421,11 +2768,16 @@
         authModeButtons: document.querySelectorAll("[data-auth-mode]"),
         authCopy: document.querySelector("#auth-copy"),
         authConfigNote: document.querySelector("#auth-config-note"),
+        authFirstNameField: document.querySelector("#auth-first-name-field"),
+        authFirstName: document.querySelector("#auth-first-name-input"),
         authEmail: document.querySelector("#auth-email-input"),
         authPassword: document.querySelector("#auth-password-input"),
         authSubmitButton: document.querySelector("#auth-submit-button"),
         authPullButton: document.querySelector("#auth-pull-button"),
         authLogoutButton: document.querySelector("#auth-logout-button"),
+        adminPanel: document.querySelector("#admin-panel"),
+        adminRefreshButton: document.querySelector("#admin-refresh-button"),
+        adminUserList: document.querySelector("#admin-user-list"),
         recapDialog: document.querySelector("#recap-dialog"),
         closeRecapButton: document.querySelector("#close-recap-button"),
         recapYearSelect: document.querySelector("#recap-year-select"),
@@ -2453,6 +2805,9 @@
       };
 
       elements.sort.value = state.sort;
+      elements.themeSelect.value = state.theme;
+      applyTheme(state.theme);
+      updateWelcomeLine();
       updateRatingControl();
 
       function scopedStorageKey(key) {
@@ -2538,6 +2893,7 @@
 
       function savePreferences() {
         localStorage.setItem(scopedStorageKey(PREFERENCES_KEY), JSON.stringify({
+          theme: state.theme,
           statSettings: state.statSettings
         }));
         queueCloudSync();
@@ -2554,7 +2910,26 @@
       }
 
       function normalize(value) {
-        return value.trim().replace(/\s+/g, " ");
+        return String(value || "").trim().replace(/\s+/g, " ");
+      }
+
+      function applyTheme(theme) {
+        const allowedThemes = new Set(["classic", "rock", "metal", "pop", "indie", "electro", "jazz", "hiphop"]);
+        state.theme = allowedThemes.has(theme) ? theme : DEFAULT_THEME;
+        document.body.dataset.theme = state.theme === DEFAULT_THEME ? "" : state.theme;
+        document.querySelector('meta[name="theme-color"]')?.setAttribute("content", state.theme === "metal" || state.theme === "electro" ? "#171818" : "#f7f6f2");
+      }
+
+      function firstName() {
+        const name = normalize(authRuntime.profile?.first_name || authRuntime.user?.user_metadata?.first_name || "");
+        return name || "";
+      }
+
+      function updateWelcomeLine() {
+        const name = firstName();
+        elements.welcomeLine.textContent = name
+          ? `Willkommen zurück, ${name}.`
+          : "Willkommen zurück.";
       }
 
       function splitSupportBands(value) {
@@ -2791,6 +3166,7 @@
               return (concertRating(a) || 11) - (concertRating(b) || 11) || b.date.localeCompare(a.date);
             case "upcoming-first":
               return Number(isUpcoming(b)) - Number(isUpcoming(a)) || a.date.localeCompare(b.date);
+            case "year-groups":
             case "date-desc":
             default:
               return b.date.localeCompare(a.date);
@@ -2903,7 +3279,9 @@
           return;
         }
 
-        elements.list.innerHTML = renderYearGroups(concerts);
+        elements.list.innerHTML = state.sort === "year-groups"
+          ? renderYearGroups(concerts)
+          : concerts.map(renderConcertCard).join("");
       }
 
       function renderTopList(target, emptyTarget, values, unitSingular, unitPlural) {
@@ -3117,6 +3495,7 @@
           venues: state.venues,
           bands: state.bands,
           preferences: {
+            theme: state.theme,
             statSettings: state.statSettings
           }
         };
@@ -3131,6 +3510,7 @@
         localStorage.setItem(scopedStorageKey(VENUES_KEY), JSON.stringify(state.venues));
         localStorage.setItem(scopedStorageKey(BANDS_KEY), JSON.stringify(state.bands));
         localStorage.setItem(scopedStorageKey(PREFERENCES_KEY), JSON.stringify({
+          theme: state.theme,
           statSettings: state.statSettings
         }));
       }
@@ -3141,7 +3521,9 @@
         state.concerts = concerts;
         state.venues = loadVenues(concerts);
         state.bands = loadBands(concerts);
+        if (typeof preferences.theme === "string") applyTheme(preferences.theme);
         state.statSettings = Array.isArray(preferences.statSettings) ? preferences.statSettings : DEFAULT_STATS;
+        elements.themeSelect.value = state.theme;
         renderBandOptions();
         renderVenueOptions();
         render();
@@ -3174,6 +3556,9 @@
 
           if (payload.preferences) {
             const allowedStats = new Set([...elements.statSettingInputs].map(input => input.value));
+            if (typeof payload.preferences.theme === "string") {
+              applyTheme(payload.preferences.theme);
+            }
             if (Array.isArray(payload.preferences.statSettings)) {
               state.statSettings = payload.preferences.statSettings.filter(id => allowedStats.has(id));
             }
@@ -3192,6 +3577,8 @@
         const configured = isSupabaseConfigured();
         const signedIn = Boolean(authRuntime.user);
         const email = authRuntime.user?.email || "Angemeldet";
+        const name = firstName();
+        const isAdmin = isAdminUser();
 
         elements.accountButtonLabel.textContent = signedIn ? "Konto" : "Anmelden";
         elements.accountButton.title = signedIn ? `Konto: ${email}` : "Konto erstellen oder anmelden";
@@ -3206,7 +3593,9 @@
         elements.authEmail.disabled = !configured;
         elements.authPassword.disabled = !configured;
         elements.authSubmitButton.disabled = !configured;
-        elements.authAccountEmail.textContent = email;
+        elements.authAccountEmail.textContent = name ? `${name} · ${email}` : email;
+        elements.adminPanel.hidden = !isAdmin;
+        updateWelcomeLine();
 
         if (cloudRuntime.pushing || cloudRuntime.pulling) return;
         if (!configured) {
@@ -3232,8 +3621,10 @@
         });
         elements.authSubmitButton.textContent = authRuntime.mode === "signup" ? "Konto erstellen" : "Anmelden";
         elements.authPassword.autocomplete = authRuntime.mode === "signup" ? "new-password" : "current-password";
+        elements.authFirstNameField.hidden = authRuntime.mode !== "signup";
+        elements.authFirstName.required = authRuntime.mode === "signup";
         elements.authCopy.textContent = authRuntime.mode === "signup"
-          ? "Erstelle ein Konto und deine Liste wird danach automatisch online gespeichert."
+          ? "Erstelle ein Konto mit deinem Vornamen. Danach wird deine Liste automatisch online gespeichert."
           : "Melde dich an, damit deine Konzertliste auf Handy, Tablet und Computer gleich bleibt.";
       }
 
@@ -3246,8 +3637,65 @@
         }
       }
 
-      async function completeSignedInSetup(session, migrationPayload) {
+      function isAdminUser() {
+        return (authRuntime.user?.email || "").toLocaleLowerCase("de-DE") === ADMIN_EMAIL;
+      }
+
+      async function fetchOwnProfile() {
+        if (!authRuntime.user) return null;
+        const rows = await supabaseRequest(`/rest/v1/user_profiles?select=first_name,email,created_at,updated_at&user_id=eq.${encodeURIComponent(authRuntime.user.id)}&limit=1`);
+        authRuntime.profile = Array.isArray(rows) ? rows[0] || null : null;
+        updateWelcomeLine();
+        return authRuntime.profile;
+      }
+
+      async function upsertOwnProfile(firstNameValue = "") {
+        if (!authRuntime.user) return null;
+        const cleanName = normalize(firstNameValue || firstName() || authRuntime.user?.user_metadata?.first_name || "");
+        const payload = {
+          user_id: authRuntime.user.id,
+          first_name: cleanName,
+          email: authRuntime.user.email || "",
+          updated_at: new Date().toISOString()
+        };
+        const rows = await supabaseRequest("/rest/v1/user_profiles?on_conflict=user_id", {
+          method: "POST",
+          headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+          body: payload
+        });
+        authRuntime.profile = Array.isArray(rows) ? rows[0] || payload : payload;
+        updateWelcomeLine();
+        return authRuntime.profile;
+      }
+
+      async function loadAdminUsers() {
+        if (!isAdminUser()) return;
+        elements.adminUserList.innerHTML = `<p>Konten werden geladen …</p>`;
+        try {
+          const rows = await supabaseRequest("/rest/v1/user_profiles?select=first_name,email,created_at&order=created_at.desc&limit=200");
+          const users = Array.isArray(rows) ? rows : [];
+          elements.adminUserList.innerHTML = users.length
+            ? users.map(user => `
+                <div class="admin-user-row">
+                  <strong title="${escapeHtml(user.first_name || "Ohne Namen")}">${escapeHtml(user.first_name || "Ohne Namen")}</strong>
+                  <span title="${escapeHtml(user.email || "Keine E-Mail")}">${escapeHtml(user.email || "Keine E-Mail")}</span>
+                </div>
+              `).join("")
+            : `<p>Noch keine Nutzerprofile gefunden.</p>`;
+        } catch (error) {
+          console.warn("Admin-Nutzer konnten nicht geladen werden", error);
+          elements.adminUserList.innerHTML = `<p>${escapeHtml(error.message || "Nutzer konnten nicht geladen werden.")}</p>`;
+        }
+      }
+
+      async function completeSignedInSetup(session, migrationPayload, firstNameValue = "") {
         setAuthSession(session);
+        try {
+          await fetchOwnProfile();
+          if (firstNameValue || !authRuntime.profile) await upsertOwnProfile(firstNameValue);
+        } catch (error) {
+          console.warn("Profil konnte nicht gespeichert oder geladen werden", error);
+        }
         const userLocalConcerts = loadConcerts();
         if (userLocalConcerts.length > 0) {
           applyStoredArchive();
@@ -3257,6 +3705,7 @@
           applyStoredArchive();
         }
         updateAuthInterface();
+        if (isAdminUser()) loadAdminUsers();
         await pullCloudData({ migrationPayload });
       }
 
@@ -3271,11 +3720,11 @@
         await completeSignedInSetup(session, archivePayload());
       }
 
-      async function signUpWithPassword(email, password) {
+      async function signUpWithPassword(email, password, firstNameValue) {
         const data = await supabaseRequest("/auth/v1/signup", {
           method: "POST",
           auth: false,
-          body: { email, password }
+          body: { email, password, data: { first_name: normalize(firstNameValue) } }
         });
         const session = normalizeSession(data);
         if (!session) {
@@ -3283,7 +3732,7 @@
           showToast("Konto erstellt. Bitte bestätige deine E-Mail und melde dich an.");
           return;
         }
-        await completeSignedInSetup(session, archivePayload());
+        await completeSignedInSetup(session, archivePayload(), firstNameValue);
       }
 
       async function signOut() {
@@ -3297,6 +3746,7 @@
           console.warn("Abmeldung bei Supabase fehlgeschlagen", error);
         }
         setAuthSession(null);
+        authRuntime.profile = null;
         applyStoredArchive();
         updateAuthInterface();
         showToast("Du bist abgemeldet.");
@@ -3377,7 +3827,10 @@
         if (!authRuntime.user || !isSupabaseConfigured()) return false;
         try {
           await ensureFreshSession();
+          await fetchOwnProfile();
+          updateAuthInterface();
           applyStoredArchive();
+          if (isAdminUser()) loadAdminUsers();
           return pullCloudData();
         } catch (error) {
           console.warn("Cloud-Anmeldung konnte nicht erneuert werden", error);
@@ -3413,8 +3866,11 @@
 
         const bands = allBandAppearances(concerts);
         const uniqueBandCount = new Set(bands.map(keyFor)).size;
-        const topBand = countValues(bands)[0];
-        const topVenue = countValues(concerts.map(concert => concert.venue))[0];
+        const name = firstName();
+        const topBands = countValues(bands).slice(0, 3);
+        const topBand = topBands[0];
+        const topVenues = countValues(concerts.map(concert => concert.venue)).slice(0, 3);
+        const topVenue = topVenues[0];
         const monthCounts = countValues(concerts.map(concert => String(parseDate(concert.date).getMonth())));
         const favoriteMonth = monthCounts[0]
           ? new Intl.DateTimeFormat("de-DE", { month: "long" }).format(new Date(2020, Number(monthCounts[0].name), 1))
@@ -3427,66 +3883,90 @@
         const lastConcert = concerts.at(-1);
         const supportCount = concerts.reduce((sum, concert) => sum + concert.supportBands.length, 0);
         const lineupSize = bands.length;
+        const averageRating = ratedConcerts.length
+          ? (ratedConcerts.reduce((sum, concert) => sum + concertRating(concert), 0) / ratedConcerts.length).toLocaleString("de-DE", { maximumFractionDigits: 1 })
+          : "–";
+        const opener = firstConcert.supportBands[0] || firstConcert.mainBand;
+        const closer = lastConcert.mainBand;
+        const personalPrefix = name ? `${name}, ` : "";
 
         return [
           {
+            label: "Jahresbilanz",
             stat: concerts.length,
-            title: `${year} war live.`,
-            body: `Du hast ${concerts.length === 1 ? "einen Abend" : `${concerts.length} Abende`} festgehalten und daraus dein Konzertjahr gebaut.`,
+            visual: "LIVE",
+            title: `${personalPrefix}${year} war dein Live-Jahr.`,
+            body: `${concerts.length === 1 ? "Ein gespeicherter Abend" : `${concerts.length} gespeicherte Abende`} erzählen, wo du warst, was lief und welche Namen hängen geblieben sind.`,
             facts: [
               { value: uniqueBandCount, label: "verschiedene Bands" },
               { value: lineupSize, label: "Live-Auftritte" },
               { value: favoriteMonth, label: "stärkster Monat" }
-            ]
+            ],
+            ribbons: [`Start: ${formatCompactDate(firstConcert.date)}`, `Finale: ${formatCompactDate(lastConcert.date)}`, `${supportCount} Vorbands`]
           },
           {
+            label: "Top Act",
             title: "Dein meistgesehener Act",
             stat: topBand?.count || 0,
-            body: topBand ? `${topBand.name} war ${topBand.count === 1 ? "einmal" : `${topBand.count} Mal`} in deinem Jahr dabei.` : "Noch kein klarer Spitzenplatz.",
+            visual: "No. 1",
+            body: topBand ? `${topBand.name} war ${topBand.count === 1 ? "einmal" : `${topBand.count} Mal`} in deinem Jahr dabei. Das ist dein Name ganz oben auf dem Festivalplakat.` : "Noch kein klarer Spitzenplatz.",
             facts: [
               { value: topBand?.name || "–", label: "Top Act" },
               { value: `${topBand?.count || 0}x`, label: "gesehen" },
               { value: supportCount, label: "Vorbands" }
-            ]
+            ],
+            ribbons: topBands.map(item => `${item.name} · ${item.count}x`)
           },
           {
+            label: "Konzertkarte",
             title: "Dein Lieblingsort",
             stat: topVenue?.count || 0,
-            body: topVenue ? `${topVenue.name} hat ${year} am häufigsten in deiner Liste geleuchtet.` : "Noch kein Ort hat sich abgesetzt.",
+            visual: "MAP",
+            body: topVenue ? `${topVenue.name} war ${year} dein häufigster Treffpunkt für Licht, Lärm und diese kurze Sekunde vor dem ersten Song.` : "Noch kein Ort hat sich abgesetzt.",
             facts: [
               { value: topVenue?.name || "–", label: "Top Venue" },
               { value: new Set(concerts.map(concert => keyFor(concert.venue))).size, label: "Orte" },
               { value: concerts.length, label: "Abende" }
-            ]
+            ],
+            ribbons: topVenues.map(item => `${item.name} · ${item.count}`)
           },
           bestConcert ? {
+            label: "Peak Moment",
             title: "Dein höchstbewerteter Abend",
             stat: `${concertRating(bestConcert)}/10`,
-            body: `${bestConcert.mainBand} am ${formatCompactDate(bestConcert.date)} war dein stärkster Eintrag des Jahres.`,
+            visual: "★",
+            body: `${bestConcert.mainBand} am ${formatCompactDate(bestConcert.date)} war dein stärkster Eintrag des Jahres. Dein Durchschnitt über alle Bewertungen: ${averageRating}/10.`,
             facts: [
               { value: bestConcert.mainBand, label: "Hauptact" },
               { value: bestConcert.venue, label: "Ort" },
               { value: formatCompactDate(bestConcert.date), label: "Datum" }
-            ]
+            ],
+            ribbons: ratedConcerts.slice(0, 3).map(concert => `${concert.mainBand} · ${concertRating(concert)}/10`)
           } : {
+            label: "Erster Eintrag",
             title: "Dein erster gespeicherter Abend",
             stat: formatCompactDate(firstConcert.date),
-            body: `${firstConcert.mainBand} hat dein Konzertjahr eröffnet.`,
+            visual: "01",
+            body: `${firstConcert.mainBand} hat dein Konzertjahr eröffnet. Bewertungen kannst du später ergänzen, dann wird hier dein Jahres-Highlight gezeigt.`,
             facts: [
               { value: firstConcert.mainBand, label: "Hauptact" },
               { value: firstConcert.venue, label: "Ort" },
               { value: formatCompactDate(lastConcert.date), label: "letzter Eintrag" }
-            ]
+            ],
+            ribbons: [firstConcert.venue, `${supportCount} Vorbands`]
           },
           {
+            label: "Credits",
             title: "Das Finale",
             stat: year,
-            body: `Von ${firstConcert.mainBand} bis ${lastConcert.mainBand}: Das war dein Konzertjahr in einer Liste, die wieder abrufbar bleibt.`,
+            visual: "END",
+            body: `Von ${opener} bis ${closer}: Das war dein Konzertjahr als kleines Archiv. Nicht nur Zahlen, sondern eine Spur aus Orten, Bands und Abenden.`,
             facts: [
               { value: formatCompactDate(firstConcert.date), label: "Start" },
               { value: formatCompactDate(lastConcert.date), label: "Finale" },
               { value: `${supportCount}`, label: "Vorbands" }
-            ]
+            ],
+            ribbons: [`${uniqueBandCount} Bands`, `${new Set(concerts.map(concert => keyFor(concert.venue))).size} Orte`, `Ø ${averageRating}/10`]
           }
         ];
       }
@@ -3501,8 +3981,14 @@
         if (recapRuntime.slides.length === 0) {
           elements.recapStage.innerHTML = `
             <section class="recap-slide">
-              <h3>Noch kein Recap bereit.</h3>
-              <p>Sobald in einem Jahr stattgefundene Konzerte gespeichert sind, entsteht hier dein Jahresrückblick.</p>
+              <div class="recap-slide-top">
+                <div>
+                  <span class="recap-label">Noch leer</span>
+                  <h3>Noch kein Recap bereit.</h3>
+                  <p>Sobald in einem Jahr stattgefundene Konzerte gespeichert sind, entsteht hier dein Jahresrückblick.</p>
+                </div>
+                <div class="recap-visual"><span>0</span></div>
+              </div>
             </section>`;
           elements.recapDots.innerHTML = "";
           elements.recapPrevButton.disabled = true;
@@ -3516,11 +4002,23 @@
               <div class="recap-fact"><strong title="${escapeHtml(item.value)}">${escapeHtml(item.value)}</strong><span>${escapeHtml(item.label)}</span></div>
             `).join("")}</div>`
           : "";
+        const ribbons = slide.ribbons?.length
+          ? `<div class="recap-ribbon">${slide.ribbons.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>`
+          : "";
         elements.recapStage.innerHTML = `
           <section class="recap-slide">
-            <div class="recap-stat">${escapeHtml(slide.stat)}</div>
-            <h3>${escapeHtml(slide.title)}</h3>
-            <p>${escapeHtml(slide.body)}</p>
+            <div class="recap-slide-top">
+              <div>
+                <span class="recap-label">${escapeHtml(slide.label || "Highlight")}</span>
+                <div class="recap-stat">${escapeHtml(slide.stat)}</div>
+              </div>
+              <div class="recap-visual"><span>${escapeHtml(slide.visual || "★")}</span></div>
+            </div>
+            <div class="recap-body">
+              <h3>${escapeHtml(slide.title)}</h3>
+              <p>${escapeHtml(slide.body)}</p>
+              ${ribbons}
+            </div>
             ${facts}
           </section>`;
         elements.recapDots.innerHTML = recapRuntime.slides.map((_, index) => `
@@ -3700,6 +4198,7 @@
         elements.statSettingInputs.forEach(input => {
           input.checked = state.statSettings.includes(input.value);
         });
+        elements.themeSelect.value = state.theme;
         elements.newVenueInput.value = "";
         updateAuthInterface();
         elements.settingsDialog.showModal();
@@ -3718,16 +4217,18 @@
 
         const email = elements.authEmail.value.trim();
         const password = elements.authPassword.value;
+        const firstNameValue = normalize(elements.authFirstName.value);
         elements.authSubmitButton.disabled = true;
         elements.authSubmitButton.textContent = authRuntime.mode === "signup" ? "Konto wird erstellt …" : "Anmeldung läuft …";
 
         try {
           if (authRuntime.mode === "signup") {
-            await signUpWithPassword(email, password);
+            await signUpWithPassword(email, password, firstNameValue);
           } else {
             await signInWithPassword(email, password);
           }
           elements.authPassword.value = "";
+          elements.authFirstName.value = "";
           updateAuthInterface();
           if (authRuntime.user) {
             elements.authDialog.close();
@@ -3759,6 +4260,8 @@
           showToast("Cloud-Liste wurde geladen.");
         }
       });
+
+      elements.adminRefreshButton.addEventListener("click", loadAdminUsers);
 
       elements.settingsLogoutButton.addEventListener("click", signOut);
       elements.authLogoutButton.addEventListener("click", signOut);
@@ -3873,6 +4376,7 @@
         }
 
         state.venues = uniqueSorted(nextVenues);
+        applyTheme(elements.themeSelect.value);
         state.statSettings = [...elements.statSettingInputs]
           .filter(input => input.checked)
           .map(input => input.value);
@@ -4033,12 +4537,21 @@
         elements.installAppButton.hidden = false;
       });
 
-      elements.installAppButton.addEventListener("click", async () => {
-        if (!installPrompt) return;
+      async function promptInstallApp() {
+        if (!installPrompt) {
+          showToast("Falls kein Installationsfenster erscheint: Browser-Menü öffnen und „Zum Startbildschirm hinzufügen“ wählen.");
+          return;
+        }
         installPrompt.prompt();
         await installPrompt.userChoice;
         installPrompt = null;
         elements.installAppButton.hidden = true;
+      }
+
+      elements.installAppButton.addEventListener("click", promptInstallApp);
+
+      elements.settingsInstallAppButton.addEventListener("click", async () => {
+        await promptInstallApp();
       });
 
       window.addEventListener("appinstalled", () => {

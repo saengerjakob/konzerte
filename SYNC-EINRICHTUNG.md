@@ -29,7 +29,7 @@ const SUPABASE_ANON_KEY = "dein-anon-public-key";
 
 Der `anon public key` darf in einer statischen Website stehen. Die Trennung der Nutzer passiert durch Row-Level-Security in der Datenbank.
 
-## 2. Datenbank-Tabelle anlegen
+## 2. Datenbank-Tabellen anlegen
 
 In Supabase **SQL Editor → New query** öffnen und ausführen:
 
@@ -64,7 +64,45 @@ for update
 to authenticated
 using ((select auth.uid()) = user_id)
 with check ((select auth.uid()) = user_id);
+
+create table if not exists public.user_profiles (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  first_name text not null default '',
+  email text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.user_profiles enable row level security;
+
+drop policy if exists "Users can read their own profile and admin can read all" on public.user_profiles;
+drop policy if exists "Users can insert their own profile" on public.user_profiles;
+drop policy if exists "Users can update their own profile" on public.user_profiles;
+
+create policy "Users can read their own profile and admin can read all"
+on public.user_profiles
+for select
+to authenticated
+using (
+  (select auth.uid()) = user_id
+  or lower((select auth.jwt() ->> 'email')) = 'saengerjakob@mail.de'
+);
+
+create policy "Users can insert their own profile"
+on public.user_profiles
+for insert
+to authenticated
+with check ((select auth.uid()) = user_id);
+
+create policy "Users can update their own profile"
+on public.user_profiles
+for update
+to authenticated
+using ((select auth.uid()) = user_id)
+with check ((select auth.uid()) = user_id);
 ```
+
+Die Tabelle `concert_archives` speichert die Konzertlisten. Die Tabelle `user_profiles` speichert Vorname und E-Mail für Begrüßung und Adminbereich. Das Admin-Konto `saengerjakob@mail.de` darf alle Profile lesen; normale Nutzer sehen nur ihr eigenes Profil.
 
 ## 3. Login für Nutzer aktivieren
 
@@ -76,7 +114,7 @@ Für die einfachste private Nutzung kannst du **Confirm email** deaktivieren. Da
 
 1. Website öffnen.
 2. Oben **Anmelden** wählen.
-3. **Konto erstellen** oder mit bestehendem Konto anmelden.
+3. **Konto erstellen** mit Vorname, E-Mail und Passwort oder mit bestehendem Konto anmelden.
 4. Danach wird jede Änderung automatisch gespeichert.
 5. Auf einem weiteren Gerät einfach mit derselben E-Mail und demselben Passwort anmelden.
 
@@ -85,6 +123,8 @@ Wenn bereits lokale Konzerte vorhanden sind und die Cloud-Liste noch leer ist, l
 ## Sicherheit und Verhalten
 
 - Jede Person sieht nur den eigenen Datensatz, weil `user_id = auth.uid()` erzwungen wird.
+- Der Adminbereich wird nur angezeigt, wenn die angemeldete E-Mail `saengerjakob@mail.de` ist.
+- Der Adminbereich zeigt nur Profile, die die App beim Registrieren oder Anmelden angelegt hat.
 - Ohne Anmeldung speichert die App weiter nur lokal auf dem Gerät.
 - Die lokale Offline-Kopie bleibt pro angemeldetem Nutzer getrennt gespeichert.
 - Über **Cloud-Liste laden** und **Dieses Gerät hochladen** kann der Abgleich manuell ausgelöst werden.
