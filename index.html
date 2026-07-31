@@ -3552,7 +3552,8 @@
         clearTimeout(toastTimer);
         elements.toast.textContent = message;
         elements.toast.classList.add("visible");
-        toastTimer = setTimeout(() => elements.toast.classList.remove("visible"), 2800);
+        const duration = Math.min(Math.max(String(message).length * 55, 2800), 9000);
+        toastTimer = setTimeout(() => elements.toast.classList.remove("visible"), duration);
       }
 
       function setSyncStatus(type, message) {
@@ -3590,6 +3591,16 @@
         return new Error(rawMessage || `Cloud-Speicher antwortet mit Status ${response.status}.`);
       }
 
+      function parseNetworkError(error) {
+        if (location.protocol === "file:") {
+          return new Error("Bitte oeffne die App ueber deine Website-Adresse, nicht direkt als Datei. Supabase blockiert lokale Datei-Aufrufe oft im Browser.");
+        }
+        if (!navigator.onLine) {
+          return new Error("Du bist gerade offline. Bitte pruefe deine Internetverbindung und versuche es erneut.");
+        }
+        return new Error("Supabase ist vom Browser nicht erreichbar. Pruefe Supabase-URL, Projektstatus und ob ein Browser-Blocker die Verbindung verhindert.");
+      }
+
       function normalizeSession(data) {
         if (!data?.access_token || !data?.refresh_token || !data?.user?.id) return null;
         return {
@@ -3607,6 +3618,7 @@
         }
 
         const headers = {
+          Accept: "application/json",
           apikey: SUPABASE_ANON_KEY.trim(),
           ...(options.headers || {})
         };
@@ -3614,14 +3626,21 @@
         if (options.auth !== false) {
           const session = await ensureFreshSession();
           headers.Authorization = `Bearer ${session.access_token}`;
+        } else {
+          headers.Authorization = `Bearer ${SUPABASE_ANON_KEY.trim()}`;
         }
 
-        const response = await fetch(`${supabaseBaseUrl()}${path}`, {
-          method: options.method || "GET",
-          headers,
-          body: options.body === undefined ? undefined : JSON.stringify(options.body),
-          cache: "no-store"
-        });
+        let response;
+        try {
+          response = await fetch(`${supabaseBaseUrl()}${path}`, {
+            method: options.method || "GET",
+            headers,
+            body: options.body === undefined ? undefined : JSON.stringify(options.body),
+            cache: "no-store"
+          });
+        } catch (error) {
+          throw parseNetworkError(error);
+        }
 
         if (!response.ok) throw await parseSupabaseError(response);
         if (response.status === 204) return null;
