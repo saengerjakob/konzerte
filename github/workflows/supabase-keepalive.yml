@@ -1,0 +1,20 @@
+name: Supabase Keepalive
+
+on:
+  schedule:
+    - cron: "17 7 * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping shared concert archive
+        env:
+          SUPABASE_URL: https://upykqpvroyrdyrjqjqkz.supabase.co
+          SUPABASE_ANON_KEY: sb_publishable_6YH7X9kzg6hR1-zXrdxPDQ_OY5Xv3_p
+        run: |
+          curl --fail --silent --show-error \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            "${SUPABASE_URL}/rest/v1/shared_concert_archive?select=id,updated_at&id=eq.jakob-konzerte&limit=1"
