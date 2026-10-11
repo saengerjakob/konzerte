@@ -1,6 +1,6 @@
-# Konto- und Cloud-Synchronisierung einrichten
+# Online-Speicherung ohne Konto
 
-Die App nutzt jetzt E-Mail/Passwort-Login über Supabase. Nutzer müssen keinen GitHub-Token mehr eintragen: Sie erstellen ein Konto, melden sich auf einem anderen Gerät wieder an und sehen ihre eigene Konzertliste.
+Die App speichert deine Konzertliste online in Supabase, aber ohne Benutzerkonten. Alle Geräte laden und bearbeiten dieselbe Liste. Zusätzlich gibt es einen kostenlosen GitHub-Actions-Keepalive, damit das Supabase-Projekt regelmäßig Datenbankaktivität bekommt.
 
 ## Website-Dateien veröffentlichen
 
@@ -12,119 +12,67 @@ Für Excel-Import, Installation und Offline-Nutzung müssen alle Dateien aus die
 - `sw.js`
 - `icon-192.png`, `icon-512.png`, `icon-192.svg` und `icon-512.svg`
 
-Nach dem Hochladen die veröffentlichte Seite einmal neu laden. Die App kann anschließend über **App installieren** oder über das Browsermenü zum Startbildschirm hinzugefügt werden.
+Nach dem Hochladen die veröffentlichte Seite einmal neu laden.
 
-## 1. Supabase-Projekt anlegen
+## Supabase-Tabelle anlegen
 
-1. Auf [supabase.com](https://supabase.com) ein neues Projekt erstellen.
-2. Unter **Project Settings → API** diese Werte kopieren:
-   - **Project URL**
-   - **anon public key**
-3. In `index.html` oben im Script diese beiden Konstanten füllen:
-
-```js
-const SUPABASE_URL = "https://dein-projekt.supabase.co";
-const SUPABASE_ANON_KEY = "dein-anon-public-key";
-```
-
-Der `anon public key` darf in einer statischen Website stehen. Die Trennung der Nutzer passiert durch Row-Level-Security in der Datenbank.
-
-## 2. Datenbank-Tabellen anlegen
-
-In Supabase **SQL Editor → New query** öffnen und ausführen:
+In Supabase **SQL Editor -> New query** öffnen und ausführen:
 
 ```sql
-create table if not exists public.concert_archives (
-  user_id uuid primary key references auth.users(id) on delete cascade,
-  payload jsonb not null default '{}'::jsonb,
+create table if not exists public.shared_concert_archive (
+  id text primary key,
+  payload jsonb not null default jsonb_build_object(
+    'version', 2,
+    'concerts', jsonb_build_array(),
+    'venues', jsonb_build_array(),
+    'bands', jsonb_build_array(),
+    'preferences', jsonb_build_object()
+  ),
   updated_at timestamptz not null default now()
 );
 
-alter table public.concert_archives enable row level security;
+alter table public.shared_concert_archive enable row level security;
 
-drop policy if exists "Users can read their own concert archive" on public.concert_archives;
-drop policy if exists "Users can insert their own concert archive" on public.concert_archives;
-drop policy if exists "Users can update their own concert archive" on public.concert_archives;
+drop policy if exists "Shared concert archive can be read" on public.shared_concert_archive;
+drop policy if exists "Shared concert archive can be created" on public.shared_concert_archive;
+drop policy if exists "Shared concert archive can be updated" on public.shared_concert_archive;
 
-create policy "Users can read their own concert archive"
-on public.concert_archives
+create policy "Shared concert archive can be read"
+on public.shared_concert_archive
 for select
-to authenticated
-using ((select auth.uid()) = user_id);
+to anon
+using (id = 'jakob-konzerte');
 
-create policy "Users can insert their own concert archive"
-on public.concert_archives
+create policy "Shared concert archive can be created"
+on public.shared_concert_archive
 for insert
-to authenticated
-with check ((select auth.uid()) = user_id);
+to anon
+with check (id = 'jakob-konzerte');
 
-create policy "Users can update their own concert archive"
-on public.concert_archives
+create policy "Shared concert archive can be updated"
+on public.shared_concert_archive
 for update
-to authenticated
-using ((select auth.uid()) = user_id)
-with check ((select auth.uid()) = user_id);
+to anon
+using (id = 'jakob-konzerte')
+with check (id = 'jakob-konzerte');
 
-create table if not exists public.user_profiles (
-  user_id uuid primary key references auth.users(id) on delete cascade,
-  first_name text not null default '',
-  email text not null default '',
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-alter table public.user_profiles enable row level security;
-
-drop policy if exists "Users can read their own profile and admin can read all" on public.user_profiles;
-drop policy if exists "Users can insert their own profile" on public.user_profiles;
-drop policy if exists "Users can update their own profile" on public.user_profiles;
-
-create policy "Users can read their own profile and admin can read all"
-on public.user_profiles
-for select
-to authenticated
-using (
-  (select auth.uid()) = user_id
-  or lower((select auth.jwt() ->> 'email')) = 'saengerjakob@mail.de'
-);
-
-create policy "Users can insert their own profile"
-on public.user_profiles
-for insert
-to authenticated
-with check ((select auth.uid()) = user_id);
-
-create policy "Users can update their own profile"
-on public.user_profiles
-for update
-to authenticated
-using ((select auth.uid()) = user_id)
-with check ((select auth.uid()) = user_id);
+insert into public.shared_concert_archive (id)
+values ('jakob-konzerte')
+on conflict (id) do nothing;
 ```
 
-Die Tabelle `concert_archives` speichert die Konzertlisten. Die Tabelle `user_profiles` speichert Vorname und E-Mail für Begrüßung und Adminbereich. Das Admin-Konto `saengerjakob@mail.de` darf alle Profile lesen; normale Nutzer sehen nur ihr eigenes Profil.
+## Keepalive gegen Supabase-Pause
 
-## 3. Login für Nutzer aktivieren
+Im Ordner `.github/workflows/` liegt die Datei `supabase-keepalive.yml`. Wenn diese Website in einem GitHub-Repository liegt und GitHub Actions aktiviert ist, ruft GitHub Supabase einmal täglich auf. Das erzeugt regelmäßig Datenbankaktivität und hilft, das kostenlose Supabase-Projekt wach zu halten.
 
-Unter **Authentication → Providers → Email** muss E-Mail aktiviert sein.
+Wichtig: Supabase garantiert das dauerhafte Nicht-Pausieren auf dem Free-Plan nicht offiziell. Für eine private kleine Website ist dieser Keepalive aber die kostenlose praktische Lösung.
 
-Für die einfachste private Nutzung kannst du **Confirm email** deaktivieren. Dann ist ein neues Konto sofort nutzbar. Wenn du E-Mail-Bestätigung aktiviert lässt, zeigt die App nach der Registrierung an, dass die E-Mail zuerst bestätigt werden muss.
+## Verhalten in der App
 
-## 4. Nutzung in der App
+- Beim Öffnen lädt die App die Online-Liste.
+- Änderungen werden automatisch online gespeichert.
+- Eine lokale Kopie bleibt im Browser erhalten, falls Supabase kurz nicht erreichbar ist.
+- Über **Jetzt online speichern** und **Online-Liste laden** kannst du manuell synchronisieren.
+- Für zusätzliche Sicherheit kannst du weiterhin gelegentlich **Excel-Export** nutzen.
 
-1. Website öffnen.
-2. Oben **Anmelden** wählen.
-3. **Konto erstellen** mit Vorname, E-Mail und Passwort oder mit bestehendem Konto anmelden.
-4. Danach wird jede Änderung automatisch gespeichert.
-5. Auf einem weiteren Gerät einfach mit derselben E-Mail und demselben Passwort anmelden.
-
-Wenn bereits lokale Konzerte vorhanden sind und die Cloud-Liste noch leer ist, legt die App beim ersten Login automatisch die erste Cloud-Kopie an.
-
-## Sicherheit und Verhalten
-
-- Jede Person sieht nur den eigenen Datensatz, weil `user_id = auth.uid()` erzwungen wird.
-- Der Adminbereich wird nur angezeigt, wenn die angemeldete E-Mail `saengerjakob@mail.de` ist.
-- Der Adminbereich zeigt nur Profile, die die App beim Registrieren oder Anmelden angelegt hat.
-- Ohne Anmeldung speichert die App weiter nur lokal auf dem Gerät.
-- Die lokale Offline-Kopie bleibt pro angemeldetem Nutzer getrennt gespeichert.
-- Über **Cloud-Liste laden** und **Dieses Gerät hochladen** kann der Abgleich manuell ausgelöst werden.
+Hinweis: Ohne Login gibt es keinen echten privaten Zugriffsschutz. Wer den Website-Code und den öffentlichen Supabase-Key kennt, könnte theoretisch dieselbe Liste lesen oder ändern. Für starken Schutz wären wieder Konten oder eine kleine geschützte Server-Funktion nötig.

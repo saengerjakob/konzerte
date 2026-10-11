@@ -2343,8 +2343,8 @@
         </span>
       </div>
 
-      <div class="header-actions" aria-label="Konto und Datenverwaltung">
-        <button class="button button-ghost" id="account-button" type="button" title="Konto öffnen">
+      <div class="header-actions" aria-label="Datenverwaltung">
+        <button class="button button-ghost" id="account-button" type="button" title="Konto öffnen" hidden>
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 21a8 8 0 0 0-16 0"></path><circle cx="12" cy="7" r="4"></circle>
           </svg>
@@ -2606,7 +2606,7 @@
 
         <section class="settings-section" aria-labelledby="theme-settings-title">
           <h3 id="theme-settings-title">Theme</h3>
-          <p>Wähle eine Stimmung für die App. Deine Auswahl wird mit deinem Konto synchronisiert.</p>
+          <p>Wähle eine Stimmung für die App. Deine Auswahl wird lokal in diesem Browser gespeichert.</p>
           <div class="field">
             <label for="theme-select">Genre-Theme</label>
             <select class="select" id="theme-select">
@@ -2623,17 +2623,17 @@
         </section>
 
         <section class="settings-section" aria-labelledby="sync-settings-title">
-          <h3 id="sync-settings-title">Konto &amp; Cloud-Sync</h3>
-          <p>Mit E-Mail und Passwort anmelden, danach ist deine Liste auf allen Geräten verfügbar.</p>
+          <h3 id="sync-settings-title">Online-Speicherung</h3>
+          <p>Die App speichert deine Liste online in Supabase. Du brauchst kein Konto; alle Geräte verwenden dieselbe Liste.</p>
           <div class="sync-panel">
-            <div class="sync-status" id="sync-status"><span class="sync-dot" aria-hidden="true"></span><span id="sync-status-text">Nur lokal gespeichert</span></div>
+            <div class="sync-status working" id="sync-status"><span class="sync-dot" aria-hidden="true"></span><span id="sync-status-text">Online-Speicher wird geladen</span></div>
             <div class="sync-actions">
-              <button class="button" id="open-auth-button" type="button">Anmelden oder Konto erstellen</button>
-              <button class="button button-ghost" id="cloud-push-button" type="button" hidden>Dieses Gerät hochladen</button>
-              <button class="button button-ghost" id="cloud-pull-button" type="button" hidden>Cloud-Liste laden</button>
+              <button class="button" id="open-auth-button" type="button" hidden>Anmelden oder Konto erstellen</button>
+              <button class="button button-ghost" id="cloud-push-button" type="button">Jetzt online speichern</button>
+              <button class="button button-ghost" id="cloud-pull-button" type="button">Online-Liste laden</button>
               <button class="button button-ghost button-danger" id="settings-logout-button" type="button" hidden>Abmelden</button>
             </div>
-            <p class="sync-help" id="sync-help">Ohne Anmeldung bleibt die Liste nur auf diesem Gerät gespeichert.</p>
+            <p class="sync-help" id="sync-help">Änderungen werden automatisch online gespeichert. Lokal bleibt eine Offline-Kopie erhalten.</p>
           </div>
         </section>
 
@@ -2710,7 +2710,7 @@
             <button class="filter-chip active" type="button" data-auth-mode="login" aria-pressed="true">Anmelden</button>
             <button class="filter-chip" type="button" data-auth-mode="signup" aria-pressed="false">Konto erstellen</button>
           </div>
-          <p class="auth-copy" id="auth-copy">Melde dich an, damit deine Konzertliste auf Handy, Tablet und Computer gleich bleibt.</p>
+          <p class="auth-copy" id="auth-copy">Konten sind deaktiviert. Deine Konzertliste wird lokal gespeichert.</p>
           <p class="auth-config-note" id="auth-config-note" hidden>Der Cloud-Speicher ist noch nicht eingerichtet. Trage zuerst Supabase-URL und Anon-Key in der index.html ein.</p>
           <div class="auth-fields">
             <div class="field auth-first-name-field" id="auth-first-name-field" hidden>
@@ -2781,17 +2781,19 @@
       const AUTH_SESSION_KEY = "meine-konzertliste-auth-session-v1";
       const SUPABASE_URL = "https://upykqpvroyrdyrjqjqkz.supabase.co";
       const SUPABASE_ANON_KEY = "sb_publishable_6YH7X9kzg6hR1-zXrdxPDQ_OY5Xv3_p";
-      const ADMIN_EMAIL = "saengerjakob@mail.de";
+      const SHARED_ARCHIVE_TABLE = "shared_concert_archive";
+      const SHARED_ARCHIVE_ID = "jakob-konzerte";
       const DEFAULT_THEME = "classic";
       const DEFAULT_STATS = ["bands", "appearances", "places", "year", "upcoming", "averageRating", "topBands", "topVenues"];
 
+      migrateLegacyAccountStorage();
+
       const authRuntime = {
-        session: loadAuthSession(),
+        session: null,
         user: null,
         mode: "login",
         profile: null
       };
-      authRuntime.user = authRuntime.session?.user || null;
 
       const initialConcerts = loadConcerts();
       const savedPreferences = loadPreferences();
@@ -2927,7 +2929,7 @@
       updateDatePrecisionControl();
 
       function scopedStorageKey(key) {
-        return authRuntime.user?.id ? `${key}-${authRuntime.user.id}` : key;
+        return key;
       }
 
       function loadAuthSession() {
@@ -2950,10 +2952,54 @@
         }
       }
 
+      function readConcertListFromStorage(key) {
+        try {
+          const saved = JSON.parse(localStorage.getItem(key) || "[]");
+          return Array.isArray(saved) ? saved.filter(isValidConcert) : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function copyStorageValue(sourceKey, targetKey) {
+        const value = localStorage.getItem(sourceKey);
+        if (value !== null) localStorage.setItem(targetKey, value);
+      }
+
+      function migrateLegacyAccountStorage() {
+        if (readConcertListFromStorage(STORAGE_KEY).length > 0) {
+          localStorage.removeItem(AUTH_SESSION_KEY);
+          return;
+        }
+
+        const candidateUserIds = [];
+        const session = loadAuthSession();
+        if (session?.user?.id) candidateUserIds.push(session.user.id);
+
+        const prefix = `${STORAGE_KEY}-`;
+        for (let index = 0; index < localStorage.length; index += 1) {
+          const key = localStorage.key(index);
+          if (key?.startsWith(prefix)) candidateUserIds.push(key.slice(prefix.length));
+        }
+
+        const userId = [...new Set(candidateUserIds)]
+          .find(id => readConcertListFromStorage(`${STORAGE_KEY}-${id}`).length > 0);
+        if (!userId) {
+          localStorage.removeItem(AUTH_SESSION_KEY);
+          return;
+        }
+
+        copyStorageValue(`${STORAGE_KEY}-${userId}`, STORAGE_KEY);
+        copyStorageValue(`${PREFERENCES_KEY}-${userId}`, PREFERENCES_KEY);
+        copyStorageValue(`${VENUES_KEY}-${userId}`, VENUES_KEY);
+        copyStorageValue(`${BANDS_KEY}-${userId}`, BANDS_KEY);
+        localStorage.removeItem(AUTH_SESSION_KEY);
+        console.info("Konzertliste aus dem alten Konto-Speicher lokal übernommen.");
+      }
+
       function loadConcerts() {
         try {
-          const saved = JSON.parse(localStorage.getItem(scopedStorageKey(STORAGE_KEY)) || "[]");
-          return Array.isArray(saved) ? saved.filter(isValidConcert) : [];
+          return readConcertListFromStorage(scopedStorageKey(STORAGE_KEY));
         } catch (error) {
           console.warn("Die gespeicherte Konzertliste konnte nicht gelesen werden.", error);
           return [];
@@ -3039,8 +3085,7 @@
       }
 
       function firstName() {
-        const name = normalize(authRuntime.profile?.first_name || authRuntime.user?.user_metadata?.first_name || "");
-        return name || "";
+        return "";
       }
 
       function updateWelcomeLine() {
@@ -3562,6 +3607,11 @@
         elements.syncStatusText.textContent = message;
       }
 
+      function markLocalSaved() {
+        setSyncStatus("online", "Lokal gespeichert");
+        elements.syncHelp.textContent = "Lokal gespeichert. Die Online-Speicherung wird erneut versucht, sobald Supabase erreichbar ist.";
+      }
+
       function normalizedSupabaseUrl() {
         return SUPABASE_URL.trim()
           .replace(/\/+(rest|auth)\/v1\/?$/i, "")
@@ -3614,21 +3664,17 @@
 
       async function supabaseRequest(path, options = {}) {
         if (!isSupabaseConfigured()) {
-          throw new Error("Der Cloud-Speicher ist noch nicht eingerichtet.");
+          throw new Error("Der Online-Speicher ist noch nicht eingerichtet.");
         }
 
+        const anonKey = SUPABASE_ANON_KEY.trim();
         const headers = {
           Accept: "application/json",
-          apikey: SUPABASE_ANON_KEY.trim(),
+          apikey: anonKey,
+          Authorization: `Bearer ${anonKey}`,
           ...(options.headers || {})
         };
         if (options.body !== undefined) headers["Content-Type"] = "application/json";
-        if (options.auth !== false) {
-          const session = await ensureFreshSession();
-          headers.Authorization = `Bearer ${session.access_token}`;
-        } else {
-          headers.Authorization = `Bearer ${SUPABASE_ANON_KEY.trim()}`;
-        }
 
         let response;
         try {
@@ -3644,7 +3690,8 @@
 
         if (!response.ok) throw await parseSupabaseError(response);
         if (response.status === 204) return null;
-        return response.json();
+        const text = await response.text();
+        return text ? JSON.parse(text) : null;
       }
 
       async function ensureFreshSession() {
@@ -3680,6 +3727,10 @@
 
       function archiveHasContent(payload) {
         return Array.isArray(payload?.concerts) && payload.concerts.length > 0;
+      }
+
+      function sharedArchiveSelectPath() {
+        return `/rest/v1/${SHARED_ARCHIVE_TABLE}?select=payload,updated_at&id=eq.${encodeURIComponent(SHARED_ARCHIVE_ID)}&limit=1`;
       }
 
       function persistArchiveLocally() {
@@ -3721,7 +3772,9 @@
             id: concert.id,
             mainBand: canonicalBand(concert.mainBand),
             supportBands: concert.supportBands.map(canonicalBand).filter(Boolean),
+            specialActs: concertSpecialActs(concert).map(canonicalBand).filter(Boolean),
             venue: normalize(concert.venue),
+            datePrecision: datePrecision(concert),
             date: concert.date,
             planned: concert.planned === true,
             rating: Math.min(10, Math.max(0, Number(concert.rating) || 0))
@@ -3751,41 +3804,30 @@
       }
 
       function updateAuthInterface() {
-        const configured = isSupabaseConfigured();
-        const signedIn = Boolean(authRuntime.user);
-        const email = authRuntime.user?.email || "Angemeldet";
-        const name = firstName();
-        const isAdmin = isAdminUser();
+        authRuntime.session = null;
+        authRuntime.user = null;
+        authRuntime.profile = null;
+        localStorage.removeItem(AUTH_SESSION_KEY);
 
-        elements.accountButtonLabel.textContent = signedIn ? "Konto" : "Anmelden";
-        elements.accountButton.title = signedIn ? `Konto: ${email}` : "Konto erstellen oder anmelden";
-        elements.openAuthButton.hidden = signedIn;
-        elements.cloudPushButton.hidden = !signedIn;
-        elements.cloudPullButton.hidden = !signedIn;
-        elements.settingsLogoutButton.hidden = !signedIn;
-        elements.authAccountCard.hidden = !signedIn;
-        elements.authEntryPanel.hidden = signedIn;
-        elements.authSubmitButton.hidden = signedIn;
-        elements.authConfigNote.hidden = configured;
-        elements.authEmail.disabled = !configured;
-        elements.authPassword.disabled = !configured;
-        elements.authSubmitButton.disabled = !configured;
-        elements.authAccountEmail.textContent = name ? `${name} · ${email}` : email;
-        elements.adminPanel.hidden = !isAdmin;
+        elements.accountButton.hidden = true;
+        elements.openAuthButton.hidden = true;
+        elements.cloudPushButton.hidden = false;
+        elements.cloudPullButton.hidden = false;
+        elements.settingsLogoutButton.hidden = true;
+        elements.authAccountCard.hidden = true;
+        elements.authEntryPanel.hidden = true;
+        elements.authSubmitButton.hidden = true;
+        elements.authConfigNote.hidden = true;
+        elements.authEmail.disabled = true;
+        elements.authPassword.disabled = true;
+        elements.authSubmitButton.disabled = true;
+        elements.adminPanel.hidden = true;
         updateWelcomeLine();
-
-        if (cloudRuntime.pushing || cloudRuntime.pulling) return;
-        if (!configured) {
-          setSyncStatus("error", "Cloud noch nicht eingerichtet");
-          elements.syncHelp.textContent = "Trage Supabase-URL und Anon-Key einmalig in der index.html ein.";
-        } else if (signedIn) {
-          setSyncStatus("online", `Angemeldet · ${email}`);
-          elements.syncHelp.textContent = cloudRuntime.lastSyncedAt
-            ? `Zuletzt synchronisiert: ${cloudRuntime.lastSyncedAt}`
-            : "Änderungen werden automatisch mit deinem Konto synchronisiert.";
-        } else {
-          setSyncStatus("", "Nur lokal gespeichert");
-          elements.syncHelp.textContent = "Melde dich an, damit deine Liste auf allen Geräten verfügbar ist.";
+        if (!cloudRuntime.pushing && !cloudRuntime.pulling) {
+          setSyncStatus(isSupabaseConfigured() ? "online" : "error", isSupabaseConfigured() ? "Online-Speicher bereit" : "Online-Speicher fehlt");
+          elements.syncHelp.textContent = isSupabaseConfigured()
+            ? "Alle Geräte verwenden dieselbe Online-Liste. Eine lokale Kopie bleibt als Fallback gespeichert."
+            : "Supabase-URL und Publishable Key fehlen in der index.html.";
         }
       }
 
@@ -3801,21 +3843,17 @@
         elements.authFirstNameField.hidden = authRuntime.mode !== "signup";
         elements.authFirstName.required = authRuntime.mode === "signup";
         elements.authCopy.textContent = authRuntime.mode === "signup"
-          ? "Erstelle ein Konto mit deinem Vornamen. Danach wird deine Liste automatisch online gespeichert."
-          : "Melde dich an, damit deine Konzertliste auf Handy, Tablet und Computer gleich bleibt.";
+          ? "Konten sind deaktiviert. Deine Konzertliste wird lokal gespeichert."
+          : "Konten sind deaktiviert. Deine Konzertliste wird lokal gespeichert.";
       }
 
       function openAuthDialog(mode = "login") {
-        setAuthMode(mode);
         updateAuthInterface();
-        if (!elements.authDialog.open) elements.authDialog.showModal();
-        if (!authRuntime.user && isSupabaseConfigured()) {
-          window.setTimeout(() => elements.authEmail.focus({ preventScroll: true }), 120);
-        }
+        showToast("Konten sind deaktiviert. Deine Konzertliste wird lokal gespeichert.");
       }
 
       function isAdminUser() {
-        return (authRuntime.user?.email || "").toLocaleLowerCase("de-DE") === ADMIN_EMAIL;
+        return false;
       }
 
       async function fetchOwnProfile() {
@@ -3887,78 +3925,59 @@
       }
 
       async function signInWithPassword(email, password) {
-        const data = await supabaseRequest("/auth/v1/token?grant_type=password", {
-          method: "POST",
-          auth: false,
-          body: { email, password }
-        });
-        const session = normalizeSession(data);
-        if (!session) throw new Error("Die Anmeldung konnte nicht abgeschlossen werden.");
-        await completeSignedInSetup(session, archivePayload());
+        throw new Error("Konten sind deaktiviert. Deine Konzertliste wird lokal gespeichert.");
       }
 
       async function signUpWithPassword(email, password, firstNameValue) {
-        const data = await supabaseRequest("/auth/v1/signup", {
-          method: "POST",
-          auth: false,
-          body: { email, password, data: { first_name: normalize(firstNameValue) } }
-        });
-        const session = normalizeSession(data);
-        if (!session) {
-          setAuthMode("login");
-          showToast("Konto erstellt. Bitte bestätige deine E-Mail und melde dich an.");
-          return;
-        }
-        await completeSignedInSetup(session, archivePayload(), firstNameValue);
+        throw new Error("Konten sind deaktiviert. Deine Konzertliste wird lokal gespeichert.");
       }
 
       async function signOut() {
         clearTimeout(cloudRuntime.timer);
         cloudRuntime.timer = null;
-        try {
-          if (authRuntime.session && isSupabaseConfigured()) {
-            await supabaseRequest("/auth/v1/logout", { method: "POST" });
-          }
-        } catch (error) {
-          console.warn("Abmeldung bei Supabase fehlgeschlagen", error);
-        }
         setAuthSession(null);
         authRuntime.profile = null;
         applyStoredArchive();
         updateAuthInterface();
-        showToast("Du bist abgemeldet.");
+        showToast("Konten sind deaktiviert. Deine Konzertliste bleibt lokal gespeichert.");
       }
 
       function queueCloudSync() {
-        if (cloudRuntime.applyingRemote || !authRuntime.user || !isSupabaseConfigured()) return;
+        if (cloudRuntime.applyingRemote) return;
         clearTimeout(cloudRuntime.timer);
+        if (!isSupabaseConfigured()) {
+          markLocalSaved();
+          return;
+        }
+        setSyncStatus("working", "Wird online gespeichert ...");
         cloudRuntime.timer = setTimeout(() => pushCloudData(), 900);
       }
 
-      async function pushCloudData() {
-        if (!authRuntime.user || cloudRuntime.pushing) return false;
+      async function pushCloudData(options = {}) {
+        if (cloudRuntime.applyingRemote || cloudRuntime.pushing) return false;
         cloudRuntime.pushing = true;
         clearTimeout(cloudRuntime.timer);
         cloudRuntime.timer = null;
-        setSyncStatus("working", "Änderungen werden gespeichert …");
+        if (!options.silent) setSyncStatus("working", "Wird online gespeichert ...");
 
         try {
-          await supabaseRequest("/rest/v1/concert_archives?on_conflict=user_id", {
+          await supabaseRequest(`/rest/v1/${SHARED_ARCHIVE_TABLE}?on_conflict=id`, {
             method: "POST",
             headers: { Prefer: "resolution=merge-duplicates,return=representation" },
             body: {
-              user_id: authRuntime.user.id,
+              id: SHARED_ARCHIVE_ID,
               payload: archivePayload(),
               updated_at: new Date().toISOString()
             }
           });
           cloudRuntime.lastSyncedAt = new Date().toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" });
-          setSyncStatus("online", `Gespeichert · ${authRuntime.user.email || "Konto"}`);
-          elements.syncHelp.textContent = `Zuletzt synchronisiert: ${cloudRuntime.lastSyncedAt}`;
+          setSyncStatus("online", "Online gespeichert");
+          elements.syncHelp.textContent = `Zuletzt gespeichert: ${cloudRuntime.lastSyncedAt}`;
           return true;
         } catch (error) {
-          console.warn("Cloud-Synchronisierung fehlgeschlagen", error);
-          setSyncStatus("error", error.message || "Cloud-Synchronisierung fehlgeschlagen");
+          console.warn("Online-Speicherung fehlgeschlagen", error);
+          setSyncStatus("error", error.message || "Online-Speicherung fehlgeschlagen");
+          elements.syncHelp.textContent = "Deine lokale Kopie bleibt erhalten. Prüfe Supabase und die Tabellen-Einrichtung.";
           return false;
         } finally {
           cloudRuntime.pushing = false;
@@ -3966,20 +3985,16 @@
       }
 
       async function pullCloudData(options = {}) {
-        if (!authRuntime.user || cloudRuntime.pushing || cloudRuntime.pulling) return false;
+        if (cloudRuntime.pushing || cloudRuntime.pulling) return false;
         cloudRuntime.pulling = true;
-        setSyncStatus("working", "Cloud-Liste wird geladen …");
+        if (!options.silent) setSyncStatus("working", "Online-Liste wird geladen ...");
 
         try {
-          const rows = await supabaseRequest(`/rest/v1/concert_archives?select=payload,updated_at&user_id=eq.${encodeURIComponent(authRuntime.user.id)}&limit=1`);
+          const rows = await supabaseRequest(sharedArchiveSelectPath());
           const row = Array.isArray(rows) ? rows[0] : null;
-          if (!row || !archiveHasContent(row.payload)) {
-            if (archiveHasContent(archivePayload()) || archiveHasContent(options.migrationPayload)) {
-              await pushCloudData();
-              return true;
-            }
-            setSyncStatus("online", `Angemeldet · ${authRuntime.user.email || "Konto"}`);
-            elements.syncHelp.textContent = "Deine Cloud-Liste ist bereit.";
+          const localPayload = archivePayload();
+          if (!row?.payload || !Array.isArray(row.payload.concerts) || (!archiveHasContent(row.payload) && archiveHasContent(localPayload))) {
+            await pushCloudData({ silent: true });
             return true;
           }
 
@@ -3987,12 +4002,13 @@
           cloudRuntime.lastSyncedAt = row.updated_at
             ? new Date(row.updated_at).toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" })
             : new Date().toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" });
-          setSyncStatus("online", `Geladen · ${authRuntime.user.email || "Konto"}`);
-          elements.syncHelp.textContent = `Zuletzt synchronisiert: ${cloudRuntime.lastSyncedAt}`;
+          setSyncStatus("online", "Online geladen");
+          elements.syncHelp.textContent = `Zuletzt geladen: ${cloudRuntime.lastSyncedAt}`;
           return true;
         } catch (error) {
-          console.warn("Cloud-Daten konnten nicht geladen werden", error);
-          setSyncStatus("error", error.message || "Cloud-Daten konnten nicht geladen werden");
+          console.warn("Online-Liste konnte nicht geladen werden", error);
+          setSyncStatus("error", error.message || "Online-Liste konnte nicht geladen werden");
+          elements.syncHelp.textContent = "Die lokale Kopie bleibt nutzbar. Prüfe Supabase und die Tabellen-Einrichtung.";
           return false;
         } finally {
           cloudRuntime.pulling = false;
@@ -4001,21 +4017,8 @@
 
       async function initializeCloudSync() {
         updateAuthInterface();
-        if (!authRuntime.user || !isSupabaseConfigured()) return false;
-        try {
-          await ensureFreshSession();
-          await fetchOwnProfile();
-          updateAuthInterface();
-          applyStoredArchive();
-          if (isAdminUser()) loadAdminUsers();
-          return pullCloudData();
-        } catch (error) {
-          console.warn("Cloud-Anmeldung konnte nicht erneuert werden", error);
-          setAuthSession(null);
-          applyStoredArchive();
-          updateAuthInterface();
-          return false;
-        }
+        if (!isSupabaseConfigured()) return false;
+        return pullCloudData({ silent: true });
       }
 
       function recapYears() {
@@ -4478,13 +4481,13 @@
 
       elements.cloudPullButton.addEventListener("click", async () => {
         if (await pullCloudData()) {
-          showToast("Cloud-Liste wurde geladen.");
+          showToast("Online-Liste wurde geladen.");
         }
       });
 
       elements.authPullButton.addEventListener("click", async () => {
         if (await pullCloudData()) {
-          showToast("Cloud-Liste wurde geladen.");
+          showToast("Online-Liste wurde geladen.");
         }
       });
 
@@ -4790,7 +4793,9 @@
       document.addEventListener("visibilitychange", () => {
         if (!document.hidden) {
           render();
-          if (authRuntime.user && !cloudRuntime.timer) pullCloudData();
+          if (!cloudRuntime.timer && !cloudRuntime.pushing && !cloudRuntime.pulling) {
+            pullCloudData({ silent: true });
+          }
         }
       });
 
@@ -4804,8 +4809,8 @@
         });
       }
       window.setInterval(() => {
-        if (authRuntime.user && !cloudRuntime.timer && !cloudRuntime.pushing && !cloudRuntime.pulling && !document.hidden) {
-          pullCloudData();
+        if (!document.hidden && !cloudRuntime.timer && !cloudRuntime.pushing && !cloudRuntime.pulling) {
+          pullCloudData({ silent: true });
         }
       }, 60000);
     })();
